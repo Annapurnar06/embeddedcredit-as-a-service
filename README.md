@@ -32,12 +32,20 @@ The core thesis: **lending becomes an intelligence problem, not an infrastructur
     │                                    #   3 lender client flows (bank, NBFC,
     │                                    #   platform business), integration
     │                                    #   models, dashboard, compliance
-    └── borrower-lending-lifecycle.md    # Borrower journeys & impact metrics
-                                         #   7-stage lending lifecycle,
-                                         #   segment journey maps (12 segments),
-                                         #   8 dynamic loan products,
-                                         #   4-tier impact metrics framework,
-                                         #   lender evaluation dashboard
+    ├── borrower-lending-lifecycle.md    # Borrower journeys & impact metrics
+    │                                    #   7-stage lending lifecycle,
+    │                                    #   segment journey maps (12 segments),
+    │                                    #   8 dynamic loan products,
+    │                                    #   4-tier impact metrics framework,
+    │                                    #   lender evaluation dashboard
+    └── lender-role-transformation.md    # Lender org transformation
+                                         #   Role-by-role evolution (CRO,
+                                         #   analyst, underwriter, PM, compliance,
+                                         #   collections, ops, board),
+                                         #   human-agent collaboration spectrum,
+                                         #   5 HITL implementation cases,
+                                         #   org before/after structure,
+                                         #   lender messaging by audience
 ```
 
 ## The 5-Layer Stack
