@@ -114,6 +114,129 @@ class ULIData(BaseModel):
     pmfby_coverage: dict | None = None
 
 
+class WarehouseReceiptData(BaseModel):
+    receipt_id: str
+    warehouse_name: str
+    commodity: str
+    quantity_quintals: float
+    quality_grade: str
+    storage_date: date
+    warehouse_grade: str
+    estimated_value: Decimal
+    insurance_active: bool = False
+
+
+class GoldAppraisalData(BaseModel):
+    appraisal_id: str
+    gold_weight_grams: float
+    purity_karats: float
+    market_rate_per_gram: Decimal
+    appraised_value: Decimal
+    ornament_description: str
+    hallmark_verified: bool = False
+
+
+class EVTelematicsData(BaseModel):
+    vehicle_id: str
+    daily_km_avg: float
+    battery_health_pct: float
+    charging_regularity_pct: float
+    total_trips_30d: int
+    battery_cycles: int
+    vehicle_model: str
+
+
+class SolarGenerationData(BaseModel):
+    installation_id: str
+    capacity_kw: float
+    avg_daily_generation_kwh: float
+    grid_savings_monthly: Decimal
+    panel_degradation_pct: float
+    net_metering_active: bool = False
+    installation_date: date | None = None
+
+
+class SHGRecordsData(BaseModel):
+    shg_name: str
+    group_id: str
+    member_count: int
+    group_tenure_months: int
+    meeting_attendance_pct: float
+    group_repayment_rate: float
+    individual_savings_regularity: float
+    nrlm_grade: str | None = None
+
+
+class VehicleTelematicsData(BaseModel):
+    vehicle_id: str
+    vehicle_type: str
+    monthly_km_driven: float
+    daily_trips_avg: int
+    fuel_efficiency_kmpl: float | None = None
+    fastag_trips_30d: int = 0
+    load_utilization_pct: float | None = None
+    idle_days_30d: int = 0
+
+
+class PoultryIntegratorData(BaseModel):
+    integrator_name: str
+    farmer_id: str
+    batch_count_12m: int
+    avg_mortality_rate_pct: float
+    feed_conversion_ratio: float
+    avg_batch_revenue: Decimal
+    integrator_tenure_months: int
+
+
+class FisheryCooperativeData(BaseModel):
+    cooperative_name: str
+    member_id: str
+    catch_regularity_pct: float
+    avg_monthly_catch_kg: float
+    catch_volume_trend: str
+    vessel_owned: bool
+    cooperative_tenure_months: int
+
+
+class FPOEntityData(BaseModel):
+    fpo_name: str
+    registration_id: str
+    member_count: int
+    aggregation_volume_trend: str
+    nabard_grade: str | None = None
+    governance_score: float | None = None
+    avg_monthly_turnover: Decimal
+
+
+class UPITransactionData(BaseModel):
+    merchant_id: str
+    avg_daily_collections: Decimal
+    collection_regularity_pct: float
+    unique_customers_30d: int
+    avg_transaction_value: Decimal
+    peak_hour_collections_pct: float
+
+
+class PropertyRecordsData(BaseModel):
+    property_id: str
+    clear_title: bool
+    encumbrance_free: bool
+    property_type: str
+    area_sqft: float
+    market_valuation: Decimal
+    location_pin: str
+
+
+class EdtechPlatformData(BaseModel):
+    platform_name: str
+    student_id: str
+    course_name: str
+    course_duration_months: int
+    completion_rate_pct: float
+    placement_rate_pct: float
+    avg_placement_salary: Decimal | None = None
+
+
 class CrossValidationResult(BaseModel):
     consistent: bool
     income_delta_pct: float | None = None
@@ -144,6 +267,18 @@ class BorrowerProfile(BaseModel):
     gst_data: GSTData | None = None
     device_score: DeviceScore | None = None
     uli_data: ULIData | None = None
+    warehouse_receipt: WarehouseReceiptData | None = None
+    gold_appraisal: GoldAppraisalData | None = None
+    ev_telematics: EVTelematicsData | None = None
+    solar_generation: SolarGenerationData | None = None
+    shg_records: SHGRecordsData | None = None
+    vehicle_telematics: VehicleTelematicsData | None = None
+    poultry_data: PoultryIntegratorData | None = None
+    fishery_data: FisheryCooperativeData | None = None
+    fpo_data: FPOEntityData | None = None
+    upi_transactions: UPITransactionData | None = None
+    property_records: PropertyRecordsData | None = None
+    edtech_data: EdtechPlatformData | None = None
     cross_validation: CrossValidationResult | None = None
     confidence: ConfidenceScore | None = None
     segment: str | None = None
