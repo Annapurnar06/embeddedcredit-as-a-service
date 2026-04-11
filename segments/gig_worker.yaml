@@ -1,0 +1,44 @@
+segment:
+  id: GIG_WORKER
+  version: 1
+  channel: whatsapp
+  languages: [hi, en]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, PLATFORM_EARNINGS]
+  optional: [DEVICE_SCORE]
+  min_confidence: 0.5
+
+scoring:
+  model: gig_score_v1
+  features:
+    - {name: platform_earnings_trend, source: PLATFORM_EARNINGS, weight: 0.30}
+    - {name: platform_rating, source: PLATFORM_EARNINGS, weight: 0.15}
+    - {name: active_days, source: PLATFORM_EARNINGS, weight: 0.15}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.20}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.20}
+
+product:
+  type: PAYOUT_LINKED
+  amount_range: {min: 10000, max: 200000}
+  tenure_range: {min: 3, max: 12}
+  schedule_template: payout_linked_v1
+  insurance_required: false
+  deduction_rate: 0.15
+
+monitoring:
+  cadence: daily
+  signals: [PLATFORM_EARNINGS, BANK_ACCOUNT_AA]
+  triggers:
+    - {signal: earnings_drop_pct, threshold: 40, intervention: SCHEDULE_ADJUST}
+    - {signal: platform_deactivation, threshold: 1, intervention: ESCALATE}
+
+graduation:
+  min_repayment_months: 6
+  min_on_time_rate: 0.85
+  amount_multiplier: 1.5
+  rate_reduction: 1.0
+
+journey:
+  entry: whatsapp_gig_inbound
+  greeting: "Hi! Delivery partner loan ke baare mein baat karte hain."

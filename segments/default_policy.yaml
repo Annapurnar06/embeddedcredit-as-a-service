@@ -1,0 +1,32 @@
+policy:
+  id: DEFAULT_POLICY
+  version: "1.0"
+
+authority_boundaries:
+  bureau_pull_max_per_aadhaar_48h: 2
+  disbursement_max_amount: 500000
+  fee_waiver_max: 500
+  moratorium_max_months: 3
+  can_auto_approve: false
+  can_disburse_without_human: false
+
+structural_rules:
+  identity_gate: true
+  write_confirmation: true
+  kfs_mandatory: true
+  bureau_velocity: true
+  cooling_off_period: true
+  consent_required: true
+  maker_checker: true
+
+behavioral_rules:
+  no_disclosure_before_verify: true
+  rbi_fair_practices_language: true
+  no_commitment_on_terms: true
+  psl_accurate_classification: true
+  empathetic_tone_distress: true
+  no_rate_guarantee: true
+  insurance_opt_in: true
+  grievance_disclosure: true
+  no_override_on_authority: true
+  pii_masked_readback: true
