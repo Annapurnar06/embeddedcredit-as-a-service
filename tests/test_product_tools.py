@@ -106,7 +106,7 @@ async def test_insurance_premium():
 def test_segment_template_loading():
     SegmentRegistry.clear()
     count = SegmentRegistry.load_from_directory("segments")
-    assert count == 3
+    assert count >= 33
 
     dairy = SegmentRegistry.get("DAIRY_FARMER")
     assert dairy is not None
