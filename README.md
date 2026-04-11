@@ -12,23 +12,32 @@ The core thesis: **lending becomes an intelligence problem, not an infrastructur
 
 ```
 .
-├── README.md                                  # This file
+├── README.md
 ├── architecture/
-│   └── system-architecture.md                 # Complete 5-layer technical architecture
-│                                              #   - 7 diagrams with explanations
-│                                              #   - 40 indexed references
-│                                              #   - MCP protocol architecture
-│                                              #   - RL training loop design
-│                                              #   - Segment-to-lender routing
-│                                              #   - Graph memory architecture
-│                                              #   - Implementation roadmap
-└── deck/
-    └── transformation-story.md                # Narrative storytelling deck
-                                               #   - Why 300M Indians are excluded
-                                               #   - How ULI changes the data layer
-                                               #   - Layer-by-layer transformation
-                                               #   - 3 borrower journey stories
-                                               #   - Gaps solved, outcomes unlocked
+│   └── system-architecture.md           # 5-layer technical architecture
+│                                        #   7 diagrams, 40 references,
+│                                        #   MCP protocol, RL training loop,
+│                                        #   segment-to-lender routing,
+│                                        #   graph memory, implementation roadmap
+├── deck/
+│   └── transformation-story.md          # Narrative storytelling deck
+│                                        #   Why 300M are excluded,
+│                                        #   ULI data revolution,
+│                                        #   layer-by-layer transformation,
+│                                        #   3 borrower journey stories,
+│                                        #   gaps solved, outcomes unlocked
+└── docs/
+    ├── platform-overview.md             # Platform overview for lenders/clients
+    │                                    #   12 products, features, value prop,
+    │                                    #   3 lender client flows (bank, NBFC,
+    │                                    #   platform business), integration
+    │                                    #   models, dashboard, compliance
+    └── borrower-lending-lifecycle.md    # Borrower journeys & impact metrics
+                                         #   7-stage lending lifecycle,
+                                         #   segment journey maps (12 segments),
+                                         #   8 dynamic loan products,
+                                         #   4-tier impact metrics framework,
+                                         #   lender evaluation dashboard
 ```
 
 ## The 5-Layer Stack
