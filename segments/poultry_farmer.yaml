@@ -1,0 +1,47 @@
+segment:
+  id: POULTRY_FARMER
+  version: 1
+  channel: whatsapp
+  languages: [hi, te, ta]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, POULTRY_INTEGRATOR_DATA]
+  optional: [LAND_RECORDS, VETERINARY_RECORDS, DEVICE_SCORE]
+  min_confidence: 0.5
+
+scoring:
+  model: poultry_score_v1
+  features:
+    - {name: batch_mortality_rate, source: POULTRY_INTEGRATOR_DATA, weight: 0.20}
+    - {name: feed_conversion_ratio, source: POULTRY_INTEGRATOR_DATA, weight: 0.15}
+    - {name: integrator_tenure_months, source: POULTRY_INTEGRATOR_DATA, weight: 0.10}
+    - {name: batch_regularity, source: POULTRY_INTEGRATOR_DATA, weight: 0.15}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.15}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.25}
+
+product:
+  type: POULTRY_CYCLE_LOAN
+  amount_range: {min: 50000, max: 500000}
+  tenure_range: {min: 3, max: 12}
+  schedule_template: batch_cycle_v1
+  insurance_required: POULTRY_MORTALITY_COVER
+  moratorium_triggers:
+    - {type: DISEASE_OUTBREAK, threshold: declared, duration_months: 2}
+    - {type: FEED_PRICE_SPIKE, threshold_percent: 40, duration_months: 1}
+
+monitoring:
+  cadence: weekly
+  signals: [POULTRY_INTEGRATOR_DATA, BANK_ACCOUNT_AA]
+  triggers:
+    - {signal: mortality_rate_spike, threshold: 10, intervention: VETERINARY_VISIT}
+    - {signal: batch_delay_days, threshold: 14, intervention: INTEGRATOR_CONTACT}
+
+graduation:
+  min_repayment_months: 6
+  min_on_time_rate: 0.90
+  amount_multiplier: 1.5
+  rate_reduction: 1.5
+
+journey:
+  entry: whatsapp_poultry_inbound
+  greeting: "Namaste! Poultry farm ke liye loan ki baat karte hain."

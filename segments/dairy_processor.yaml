@@ -1,0 +1,45 @@
+segment:
+  id: DAIRY_PROCESSOR
+  version: 1
+  channel: whatsapp
+  languages: [hi, gu, mr]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, GST_RETURNS, FSSAI_LICENSE]
+  optional: [DAIRY_COOPERATIVE, DEVICE_SCORE]
+  min_confidence: 0.5
+
+scoring:
+  model: dairy_processor_score_v1
+  features:
+    - {name: gst_turnover_trend, source: GST_RETURNS, weight: 0.20}
+    - {name: fssai_compliance, source: FSSAI_LICENSE, weight: 0.10}
+    - {name: procurement_volume_trend, source: DAIRY_COOPERATIVE, weight: 0.15}
+    - {name: buyer_diversification, source: GST_RETURNS, weight: 0.10}
+    - {name: cold_chain_capacity, source: FSSAI_LICENSE, weight: 0.05}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.15}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.25}
+
+product:
+  type: SUPPLY_CHAIN_FINANCE
+  amount_range: {min: 200000, max: 5000000}
+  tenure_range: {min: 6, max: 24}
+  schedule_template: monthly_emi_v1
+  insurance_required: COLD_CHAIN_INSURANCE
+
+monitoring:
+  cadence: weekly
+  signals: [GST_RETURNS, BANK_ACCOUNT_AA, DAIRY_COOPERATIVE]
+  triggers:
+    - {signal: procurement_drop_pct, threshold: 30, intervention: SUPPLY_REVIEW}
+    - {signal: fssai_violation, threshold: 1, intervention: ESCALATE}
+
+graduation:
+  min_repayment_months: 12
+  min_on_time_rate: 0.90
+  amount_multiplier: 1.5
+  rate_reduction: 1.0
+
+journey:
+  entry: whatsapp_dairy_processor_inbound
+  greeting: "Namaste! Dairy processing business ke liye loan ki baat karte hain."

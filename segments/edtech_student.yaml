@@ -1,0 +1,46 @@
+segment:
+  id: EDTECH_STUDENT
+  version: 1
+  channel: whatsapp
+  languages: [hi, en]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, EDTECH_PLATFORM_DATA]
+  optional: [UNIVERSITY_ENROLLMENT, SCHOLARSHIP_DATA, DEVICE_SCORE]
+  min_confidence: 0.4
+
+scoring:
+  model: edtech_student_score_v1
+  features:
+    - {name: course_completion_rate, source: EDTECH_PLATFORM_DATA, weight: 0.20}
+    - {name: placement_track_record, source: EDTECH_PLATFORM_DATA, weight: 0.20}
+    - {name: course_value_index, source: EDTECH_PLATFORM_DATA, weight: 0.10}
+    - {name: student_engagement_score, source: EDTECH_PLATFORM_DATA, weight: 0.10}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.15}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.25}
+
+product:
+  type: ISA_HYBRID
+  amount_range: {min: 30000, max: 500000}
+  tenure_range: {min: 12, max: 36}
+  schedule_template: isa_post_placement_v1
+  insurance_required: false
+  moratorium_triggers:
+    - {type: COURSE_IN_PROGRESS, threshold: active, duration_months: 6}
+
+monitoring:
+  cadence: monthly
+  signals: [EDTECH_PLATFORM_DATA, BANK_ACCOUNT_AA]
+  triggers:
+    - {signal: course_dropout, threshold: 1, intervention: RESTRUCTURE}
+    - {signal: placement_delay_months, threshold: 3, intervention: PAYMENT_EXTENSION}
+
+graduation:
+  min_repayment_months: 12
+  min_on_time_rate: 0.85
+  amount_multiplier: 1.5
+  rate_reduction: 1.5
+
+journey:
+  entry: whatsapp_edtech_inbound
+  greeting: "Hello! Course ke liye pay-after-placement loan ki baat karte hain."

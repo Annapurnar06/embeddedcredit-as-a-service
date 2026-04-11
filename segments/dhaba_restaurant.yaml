@@ -1,0 +1,46 @@
+segment:
+  id: DHABA_RESTAURANT
+  version: 1
+  channel: whatsapp
+  languages: [hi, pa, en]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, UPI_TRANSACTION_DATA]
+  optional: [GST_RETURNS, FSSAI_LICENSE, AGGREGATOR_DATA, DEVICE_SCORE]
+  min_confidence: 0.4
+
+scoring:
+  model: dhaba_restaurant_score_v1
+  features:
+    - {name: upi_daily_collections, source: UPI_TRANSACTION_DATA, weight: 0.25}
+    - {name: aggregator_orders_trend, source: AGGREGATOR_DATA, weight: 0.15}
+    - {name: fssai_compliance, source: FSSAI_LICENSE, weight: 0.05}
+    - {name: bank_inflow_regularity, source: BANK_ACCOUNT_AA, weight: 0.15}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.15}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.25}
+
+product:
+  type: DAILY_MICRO
+  amount_range: {min: 25000, max: 500000}
+  tenure_range: {min: 6, max: 18}
+  schedule_template: daily_upi_v1
+  insurance_required: false
+  moratorium_triggers:
+    - {type: FSSAI_SUSPENSION, threshold: 1, intervention: RESTRUCTURE}
+
+monitoring:
+  cadence: daily
+  signals: [UPI_TRANSACTION_DATA, AGGREGATOR_DATA, BANK_ACCOUNT_AA]
+  triggers:
+    - {signal: upi_collection_drop_pct, threshold: 40, intervention: SCHEDULE_ADJUST}
+    - {signal: aggregator_rating_drop, threshold: 3.5, intervention: OUTREACH}
+
+graduation:
+  min_repayment_months: 6
+  min_on_time_rate: 0.85
+  amount_multiplier: 1.5
+  rate_reduction: 1.5
+
+journey:
+  entry: whatsapp_dhaba_inbound
+  greeting: "Namaste! Dhaba/restaurant ke liye business loan ki baat karte hain."

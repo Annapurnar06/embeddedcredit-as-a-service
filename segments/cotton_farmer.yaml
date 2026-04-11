@@ -1,0 +1,48 @@
+segment:
+  id: COTTON_FARMER
+  version: 1
+  channel: whatsapp
+  languages: [hi, gu, mr, te]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, GINNING_MILL_DATA]
+  optional: [LAND_RECORDS, SATELLITE_NDVI, WEATHER_IMD, MSP_DATA]
+  min_confidence: 0.5
+
+scoring:
+  model: cotton_farmer_score_v1
+  features:
+    - {name: cotton_yield_trend, source: GINNING_MILL_DATA, weight: 0.20}
+    - {name: sale_regularity, source: GINNING_MILL_DATA, weight: 0.15}
+    - {name: land_area_acres, source: LAND_RECORDS, weight: 0.10}
+    - {name: msp_utilization, source: MSP_DATA, weight: 0.10}
+    - {name: ndvi_crop_health, source: SATELLITE_NDVI, weight: 0.05}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.15}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.25}
+
+product:
+  type: CROP_RECEIVABLE_LINKED
+  amount_range: {min: 30000, max: 500000}
+  tenure_range: {min: 6, max: 12}
+  schedule_template: harvest_linked_v1
+  insurance_required: PMFBY
+  moratorium_triggers:
+    - {type: BOLLWORM_OUTBREAK, threshold: declared, duration_months: 2}
+    - {type: DROUGHT, threshold: declared, duration_months: 3}
+
+monitoring:
+  cadence: weekly
+  signals: [GINNING_MILL_DATA, SATELLITE_NDVI, WEATHER_IMD]
+  triggers:
+    - {signal: ndvi_crop_stress, threshold: 0.3, intervention: AGRONOMIST_VISIT}
+    - {signal: cotton_price_crash_pct, threshold: 25, intervention: MSP_GUIDANCE}
+
+graduation:
+  min_repayment_months: 6
+  min_on_time_rate: 0.85
+  amount_multiplier: 1.5
+  rate_reduction: 1.5
+
+journey:
+  entry: whatsapp_cotton_inbound
+  greeting: "Namaste! Kapas ki kheti ke liye loan ki baat karte hain."

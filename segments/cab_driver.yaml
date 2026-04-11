@@ -1,0 +1,48 @@
+segment:
+  id: CAB_DRIVER
+  version: 1
+  channel: whatsapp
+  languages: [hi, en, kn, ta]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, PLATFORM_EARNINGS]
+  optional: [VEHICLE_TELEMATICS, DEVICE_SCORE]
+  min_confidence: 0.5
+
+scoring:
+  model: cab_driver_score_v1
+  features:
+    - {name: platform_earnings_trend, source: PLATFORM_EARNINGS, weight: 0.25}
+    - {name: platform_rating, source: PLATFORM_EARNINGS, weight: 0.10}
+    - {name: active_days_pct, source: PLATFORM_EARNINGS, weight: 0.15}
+    - {name: daily_trips_avg, source: PLATFORM_EARNINGS, weight: 0.10}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.15}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.25}
+
+product:
+  type: VEHICLE_FINANCE_PV
+  amount_range: {min: 100000, max: 800000}
+  tenure_range: {min: 24, max: 48}
+  schedule_template: daily_payout_linked_v1
+  insurance_required: MOTOR_COMPREHENSIVE
+  deduction_rate: 0.12
+  moratorium_triggers:
+    - {type: VEHICLE_BREAKDOWN, threshold: detected, duration_months: 1}
+    - {type: PLATFORM_DEACTIVATION, threshold: 1, duration_months: 1}
+
+monitoring:
+  cadence: daily
+  signals: [PLATFORM_EARNINGS, BANK_ACCOUNT_AA]
+  triggers:
+    - {signal: earnings_drop_pct, threshold: 40, intervention: SCHEDULE_ADJUST}
+    - {signal: platform_deactivation, threshold: 1, intervention: ESCALATE}
+
+graduation:
+  min_repayment_months: 12
+  min_on_time_rate: 0.90
+  amount_multiplier: 1.5
+  rate_reduction: 1.0
+
+journey:
+  entry: whatsapp_cab_inbound
+  greeting: "Namaste driver sahab! Car loan ke baare mein baat karte hain. Platform kamai se EMI kategi."

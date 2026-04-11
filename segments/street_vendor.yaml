@@ -1,0 +1,47 @@
+segment:
+  id: STREET_VENDOR
+  version: 1
+  channel: whatsapp
+  languages: [hi, en]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, SVEP_CERTIFICATE]
+  optional: [UPI_TRANSACTION_DATA, DEVICE_SCORE]
+  min_confidence: 0.4
+
+scoring:
+  model: street_vendor_score_v1
+  features:
+    - {name: upi_daily_collections, source: UPI_TRANSACTION_DATA, weight: 0.25}
+    - {name: upi_collection_regularity, source: UPI_TRANSACTION_DATA, weight: 0.15}
+    - {name: svep_vintage_months, source: SVEP_CERTIFICATE, weight: 0.10}
+    - {name: location_stability, source: SVEP_CERTIFICATE, weight: 0.10}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.15}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.25}
+
+product:
+  type: PM_SVANIDHI_PLUS
+  amount_range: {min: 10000, max: 50000}
+  tenure_range: {min: 6, max: 12}
+  schedule_template: daily_upi_v1
+  insurance_required: false
+  moratorium_triggers:
+    - {type: MUNICIPAL_EVICTION, threshold: declared, duration_months: 1}
+    - {type: MONSOON_DISRUPTION, threshold: heavy_rain_days_gt_5, duration_months: 1}
+
+monitoring:
+  cadence: daily
+  signals: [UPI_TRANSACTION_DATA, BANK_ACCOUNT_AA]
+  triggers:
+    - {signal: upi_collection_drop_pct, threshold: 50, intervention: SCHEDULE_ADJUST}
+    - {signal: zero_collection_days, threshold: 7, intervention: OUTREACH}
+
+graduation:
+  min_repayment_months: 6
+  min_on_time_rate: 0.80
+  amount_multiplier: 2.0
+  rate_reduction: 2.0
+
+journey:
+  entry: whatsapp_vendor_inbound
+  greeting: "Namaste! PM SVANidhi se zyada amount ka loan chahiye? Baat karte hain."

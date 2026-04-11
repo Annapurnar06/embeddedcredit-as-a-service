@@ -1,0 +1,48 @@
+segment:
+  id: EV_FINANCING
+  version: 1
+  channel: whatsapp
+  languages: [hi, en]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, EV_TELEMATICS]
+  optional: [PLATFORM_EARNINGS, DEVICE_SCORE]
+  min_confidence: 0.5
+
+scoring:
+  model: ev_finance_score_v1
+  features:
+    - {name: daily_km_driven, source: EV_TELEMATICS, weight: 0.20}
+    - {name: battery_health_pct, source: EV_TELEMATICS, weight: 0.15}
+    - {name: charging_regularity, source: EV_TELEMATICS, weight: 0.10}
+    - {name: platform_earnings_trend, source: PLATFORM_EARNINGS, weight: 0.15}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.20}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.20}
+
+product:
+  type: EV_ASSET_LINKED
+  amount_range: {min: 50000, max: 500000}
+  tenure_range: {min: 12, max: 48}
+  schedule_template: daily_payout_linked_v1
+  insurance_required: EV_COMPREHENSIVE
+  moratorium_triggers:
+    - {type: BATTERY_FAILURE, threshold: detected, duration_months: 1}
+    - {type: PLATFORM_DEACTIVATION, threshold: 1, duration_months: 1}
+
+monitoring:
+  cadence: daily
+  signals: [EV_TELEMATICS, PLATFORM_EARNINGS]
+  triggers:
+    - {signal: daily_km_drop_pct, threshold: 50, intervention: SCHEDULE_ADJUST}
+    - {signal: battery_health_drop, threshold: 60, intervention: BATTERY_INSPECTION}
+    - {signal: platform_deactivation, threshold: 1, intervention: ESCALATE}
+
+graduation:
+  min_repayment_months: 12
+  min_on_time_rate: 0.90
+  amount_multiplier: 1.5
+  rate_reduction: 1.5
+
+journey:
+  entry: whatsapp_ev_inbound
+  greeting: "Hello! EV vehicle loan ke baare mein baat karte hain. Daily earning se EMI kategi."

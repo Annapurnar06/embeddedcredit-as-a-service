@@ -1,0 +1,46 @@
+segment:
+  id: STUDENT_HOUSING
+  version: 1
+  channel: whatsapp
+  languages: [hi, en]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, UNIVERSITY_ENROLLMENT]
+  optional: [SCHOLARSHIP_DATA, PARENT_INCOME_PROOF]
+  min_confidence: 0.4
+
+scoring:
+  model: student_housing_score_v1
+  features:
+    - {name: university_tier, source: UNIVERSITY_ENROLLMENT, weight: 0.20}
+    - {name: course_completion_likelihood, source: UNIVERSITY_ENROLLMENT, weight: 0.15}
+    - {name: scholarship_coverage_pct, source: SCHOLARSHIP_DATA, weight: 0.15}
+    - {name: parent_income_stability, source: PARENT_INCOME_PROOF, weight: 0.15}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.15}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.20}
+
+product:
+  type: STUDENT_HOUSING_LOAN
+  amount_range: {min: 50000, max: 500000}
+  tenure_range: {min: 12, max: 48}
+  schedule_template: semester_aligned_v1
+  insurance_required: false
+  moratorium_triggers:
+    - {type: EXAM_PERIOD, threshold: exam_month, duration_months: 1}
+
+monitoring:
+  cadence: monthly
+  signals: [UNIVERSITY_ENROLLMENT, BANK_ACCOUNT_AA]
+  triggers:
+    - {signal: enrollment_dropout, threshold: 1, intervention: RESTRUCTURE}
+    - {signal: parent_payment_miss, threshold: 2, intervention: CONTACT_GUARANTOR}
+
+graduation:
+  min_repayment_months: 12
+  min_on_time_rate: 0.85
+  amount_multiplier: 1.5
+  rate_reduction: 1.0
+
+journey:
+  entry: whatsapp_student_inbound
+  greeting: "Hello! Student housing loan ke liye baat karte hain. Aapki padhai mein koi rukawat nahi aayegi."

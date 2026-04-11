@@ -1,0 +1,48 @@
+segment:
+  id: FISHERY
+  version: 1
+  channel: whatsapp
+  languages: [hi, bn, ml, or]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, FISHERY_COOPERATIVE]
+  optional: [SATELLITE_NDVI, WEATHER_IMD, DEVICE_SCORE]
+  min_confidence: 0.4
+
+scoring:
+  model: fishery_score_v1
+  features:
+    - {name: catch_regularity, source: FISHERY_COOPERATIVE, weight: 0.20}
+    - {name: catch_volume_trend, source: FISHERY_COOPERATIVE, weight: 0.15}
+    - {name: cooperative_tenure, source: FISHERY_COOPERATIVE, weight: 0.10}
+    - {name: vessel_ownership, source: FISHERY_COOPERATIVE, weight: 0.10}
+    - {name: weather_risk_score, source: WEATHER_IMD, weight: 0.10}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.15}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.20}
+
+product:
+  type: FISHERY_SEASONAL
+  amount_range: {min: 25000, max: 500000}
+  tenure_range: {min: 6, max: 18}
+  schedule_template: seasonal_catch_v1
+  insurance_required: VESSEL_INSURANCE
+  moratorium_triggers:
+    - {type: FISHING_BAN, threshold: declared, duration_months: 2}
+    - {type: CYCLONE_WARNING, threshold: declared, duration_months: 1}
+
+monitoring:
+  cadence: weekly
+  signals: [FISHERY_COOPERATIVE, WEATHER_IMD]
+  triggers:
+    - {signal: catch_volume_drop_pct, threshold: 40, intervention: SCHEDULE_ADJUST}
+    - {signal: cyclone_warning, threshold: 1, intervention: AUTO_MORATORIUM}
+
+graduation:
+  min_repayment_months: 12
+  min_on_time_rate: 0.85
+  amount_multiplier: 1.5
+  rate_reduction: 1.5
+
+journey:
+  entry: whatsapp_fishery_inbound
+  greeting: "Namaste! Machli palan ke liye loan ki baat karte hain."

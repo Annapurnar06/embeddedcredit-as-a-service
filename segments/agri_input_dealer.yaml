@@ -1,0 +1,47 @@
+segment:
+  id: AGRI_INPUT_DEALER
+  version: 1
+  channel: whatsapp
+  languages: [hi, en]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, GST_RETURNS, FERTILIZER_LICENSE]
+  optional: [DISTRIBUTOR_DATA, DEVICE_SCORE]
+  min_confidence: 0.5
+
+scoring:
+  model: agri_input_score_v1
+  features:
+    - {name: gst_turnover_trend, source: GST_RETURNS, weight: 0.20}
+    - {name: seasonal_inventory_pattern, source: GST_RETURNS, weight: 0.10}
+    - {name: fertilizer_license_active, source: FERTILIZER_LICENSE, weight: 0.10}
+    - {name: distributor_credit_limit, source: DISTRIBUTOR_DATA, weight: 0.10}
+    - {name: bank_inflow_regularity, source: BANK_ACCOUNT_AA, weight: 0.15}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.15}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.20}
+
+product:
+  type: SEASONAL_WORKING_CAPITAL
+  amount_range: {min: 100000, max: 2000000}
+  tenure_range: {min: 3, max: 9}
+  schedule_template: seasonal_bullet_v1
+  insurance_required: false
+  moratorium_triggers:
+    - {type: MONSOON_DELAY, threshold_days: 15, duration_months: 1}
+
+monitoring:
+  cadence: weekly
+  signals: [BANK_ACCOUNT_AA, GST_RETURNS]
+  triggers:
+    - {signal: turnover_drop_pct, threshold: 40, intervention: LIMIT_REVIEW}
+    - {signal: license_expiry_days, threshold: 30, intervention: LICENSE_RENEWAL_ALERT}
+
+graduation:
+  min_repayment_months: 6
+  min_on_time_rate: 0.90
+  amount_multiplier: 1.5
+  rate_reduction: 1.5
+
+journey:
+  entry: whatsapp_agri_dealer_inbound
+  greeting: "Namaste! Khad-beej ki dukan ke liye seasonal loan ki baat karte hain."

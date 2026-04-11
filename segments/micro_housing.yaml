@@ -1,0 +1,46 @@
+segment:
+  id: MICRO_HOUSING
+  version: 1
+  channel: whatsapp
+  languages: [hi, en]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, PROPERTY_RECORDS]
+  optional: [EMPLOYER_VERIFICATION, UPI_TRANSACTION_DATA, DEVICE_SCORE]
+  min_confidence: 0.5
+
+scoring:
+  model: micro_housing_score_v1
+  features:
+    - {name: property_clear_title, source: PROPERTY_RECORDS, weight: 0.15}
+    - {name: property_valuation, source: PROPERTY_RECORDS, weight: 0.15}
+    - {name: income_stability, source: BANK_ACCOUNT_AA, weight: 0.20}
+    - {name: existing_rent_payment, source: BANK_ACCOUNT_AA, weight: 0.10}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.20}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.20}
+
+product:
+  type: MICRO_HOME_LOAN
+  amount_range: {min: 100000, max: 1500000}
+  tenure_range: {min: 36, max: 120}
+  schedule_template: monthly_emi_v1
+  insurance_required: HOME_INSURANCE
+  moratorium_triggers:
+    - {type: NATURAL_DISASTER, threshold: declared, duration_months: 3}
+
+monitoring:
+  cadence: monthly
+  signals: [BANK_ACCOUNT_AA, PROPERTY_RECORDS]
+  triggers:
+    - {signal: income_drop_pct, threshold: 30, intervention: RESTRUCTURE}
+    - {signal: emi_bounce_count, threshold: 2, intervention: OUTREACH}
+
+graduation:
+  min_repayment_months: 24
+  min_on_time_rate: 0.90
+  amount_multiplier: 1.5
+  rate_reduction: 1.0
+
+journey:
+  entry: whatsapp_housing_inbound
+  greeting: "Namaste! Apna ghar banane ke liye loan ki baat karte hain."

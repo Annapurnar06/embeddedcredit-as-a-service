@@ -1,0 +1,47 @@
+segment:
+  id: GOLD_LOAN
+  version: 1
+  channel: whatsapp
+  languages: [hi, ta, te, ml, kn]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, GOLD_APPRAISAL]
+  optional: [DEVICE_SCORE]
+  min_confidence: 0.5
+
+scoring:
+  model: gold_loan_score_v1
+  features:
+    - {name: gold_purity, source: GOLD_APPRAISAL, weight: 0.25}
+    - {name: gold_weight_grams, source: GOLD_APPRAISAL, weight: 0.20}
+    - {name: market_gold_price, source: GOLD_APPRAISAL, weight: 0.15}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.15}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.15}
+    - {name: past_gold_loan_history, source: CREDIT_BUREAU, weight: 0.10}
+
+product:
+  type: GOLD_PLEDGE
+  amount_range: {min: 10000, max: 5000000}
+  tenure_range: {min: 3, max: 24}
+  schedule_template: bullet_or_monthly_interest_v1
+  insurance_required: false
+  ltv_ratio: 0.75
+  moratorium_triggers:
+    - {type: GOLD_PRICE_DROP, threshold_percent: 15, intervention: MARGIN_CALL}
+
+monitoring:
+  cadence: daily
+  signals: [GOLD_MARKET_PRICE]
+  triggers:
+    - {signal: gold_price_drop_pct, threshold: 10, intervention: LTV_REVIEW}
+    - {signal: ltv_breach, threshold: 0.85, intervention: MARGIN_CALL}
+
+graduation:
+  min_repayment_months: 6
+  min_on_time_rate: 0.90
+  amount_multiplier: 1.5
+  rate_reduction: 1.0
+
+journey:
+  entry: whatsapp_gold_inbound
+  greeting: "Namaste! Gold loan ke liye aapka swagat hai. Aapke sone ki value ke basis par loan milega."

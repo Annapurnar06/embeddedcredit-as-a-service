@@ -1,0 +1,46 @@
+segment:
+  id: HANDLOOM_WEAVER
+  version: 1
+  channel: whatsapp
+  languages: [hi, te, bn, as]
+
+data_sources:
+  required: [CREDIT_BUREAU, BANK_ACCOUNT_AA, WEAVER_COOPERATIVE]
+  optional: [ECOMMERCE_SALES_DATA, DEVICE_SCORE]
+  min_confidence: 0.4
+
+scoring:
+  model: handloom_score_v1
+  features:
+    - {name: production_regularity, source: WEAVER_COOPERATIVE, weight: 0.20}
+    - {name: order_pipeline_value, source: WEAVER_COOPERATIVE, weight: 0.15}
+    - {name: cooperative_tenure, source: WEAVER_COOPERATIVE, weight: 0.10}
+    - {name: ecommerce_sales_trend, source: ECOMMERCE_SALES_DATA, weight: 0.15}
+    - {name: bureau_score, source: CREDIT_BUREAU, weight: 0.15}
+    - {name: bank_stability, source: BANK_ACCOUNT_AA, weight: 0.25}
+
+product:
+  type: ARTISAN_WORKING_CAPITAL
+  amount_range: {min: 15000, max: 200000}
+  tenure_range: {min: 6, max: 18}
+  schedule_template: order_cycle_v1
+  insurance_required: false
+  moratorium_triggers:
+    - {type: RAW_MATERIAL_SHORTAGE, threshold: declared, duration_months: 1}
+
+monitoring:
+  cadence: monthly
+  signals: [WEAVER_COOPERATIVE, BANK_ACCOUNT_AA]
+  triggers:
+    - {signal: production_drop_pct, threshold: 40, intervention: SCHEDULE_ADJUST}
+    - {signal: order_cancellation_rate, threshold: 20, intervention: OUTREACH}
+
+graduation:
+  min_repayment_months: 6
+  min_on_time_rate: 0.85
+  amount_multiplier: 2.0
+  rate_reduction: 2.0
+
+journey:
+  entry: whatsapp_weaver_inbound
+  greeting: "Namaste! Bunai ke kaam ke liye loan ki baat karte hain."
