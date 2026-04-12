@@ -1,4 +1,5 @@
 """What-if simulation for policy parameter changes."""
+
 from __future__ import annotations
 
 from app.schemas.loan import WhatIfResult

@@ -1,4 +1,5 @@
 """YAML-based policy configuration loader for per-lender, per-segment overrides."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -23,8 +24,6 @@ def merge_policies(base: dict[str, Any], override: dict[str, Any]) -> dict[str, 
     return result
 
 
-def get_authority_boundary(
-    config: dict[str, Any], boundary_name: str, default: Any = None
-) -> Any:
+def get_authority_boundary(config: dict[str, Any], boundary_name: str, default: Any = None) -> Any:
     boundaries = config.get("authority_boundaries", {})
     return boundaries.get(boundary_name, default)

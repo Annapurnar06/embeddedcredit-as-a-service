@@ -1,4 +1,5 @@
 """UPI transaction data fetch -- mock for micro merchants."""
+
 from __future__ import annotations
 
 from decimal import Decimal

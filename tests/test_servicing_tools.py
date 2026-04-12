@@ -28,8 +28,12 @@ def _ctx(state=SessionState.VERIFIED, confirmed=False, maker=False):
 @pytest.mark.asyncio
 async def test_all_6_servicing_tools_registered():
     names = {
-        "get_loan_status", "get_repayment_schedule", "process_prepayment",
-        "apply_moratorium", "generate_statement", "generate_noc",
+        "get_loan_status",
+        "get_repayment_schedule",
+        "process_prepayment",
+        "apply_moratorium",
+        "generate_statement",
+        "generate_noc",
     }
     for name in names:
         assert ToolRegistry.get(name) is not None
@@ -57,8 +61,10 @@ async def test_repayment_schedule():
 async def test_prepayment_reduce_tenure():
     ex = ToolExecutor()
     r = await ex.execute(
-        "process_prepayment", _ctx(confirmed=True, maker=True),
-        amount=10000, mode="reduce_tenure",
+        "process_prepayment",
+        _ctx(confirmed=True, maker=True),
+        amount=10000,
+        mode="reduce_tenure",
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert r.data["months_saved"] == 2
@@ -68,8 +74,10 @@ async def test_prepayment_reduce_tenure():
 async def test_prepayment_reduce_emi():
     ex = ToolExecutor()
     r = await ex.execute(
-        "process_prepayment", _ctx(confirmed=True, maker=True),
-        amount=10000, mode="reduce_emi",
+        "process_prepayment",
+        _ctx(confirmed=True, maker=True),
+        amount=10000,
+        mode="reduce_emi",
     )
     assert r.data["new_emi"] is not None
 
@@ -78,7 +86,8 @@ async def test_prepayment_reduce_emi():
 async def test_prepayment_blocked_without_confirmation():
     ex = ToolExecutor()
     r = await ex.execute(
-        "process_prepayment", _ctx(confirmed=False),
+        "process_prepayment",
+        _ctx(confirmed=False),
         amount=10000,
     )
     assert r.status == ToolResultStatus.BLOCKED
@@ -88,8 +97,10 @@ async def test_prepayment_blocked_without_confirmation():
 async def test_moratorium():
     ex = ToolExecutor()
     r = await ex.execute(
-        "apply_moratorium", _ctx(confirmed=True, maker=True),
-        months=2, reason="flood",
+        "apply_moratorium",
+        _ctx(confirmed=True, maker=True),
+        months=2,
+        reason="flood",
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert r.data["moratorium_months"] == 2

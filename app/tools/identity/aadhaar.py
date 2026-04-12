@@ -1,4 +1,5 @@
 """Aadhaar eKYC verification tools (mock implementation with realistic schemas)."""
+
 from __future__ import annotations
 
 import hashlib

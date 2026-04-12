@@ -28,9 +28,14 @@ def _ctx(state=SessionState.VERIFIED, confirmed=False, maker=False):
 @pytest.mark.asyncio
 async def test_all_8_scoring_tools_registered():
     names = {
-        "evaluate_segment_policy", "compute_segment_score", "compute_risk_pricing",
-        "check_fraud_signals", "generate_cam", "run_what_if",
-        "check_psl_classification", "generate_explainability",
+        "evaluate_segment_policy",
+        "compute_segment_score",
+        "compute_risk_pricing",
+        "check_fraud_signals",
+        "generate_cam",
+        "run_what_if",
+        "check_psl_classification",
+        "generate_explainability",
     }
     for name in names:
         assert ToolRegistry.get(name) is not None, f"'{name}' not registered"
@@ -40,8 +45,11 @@ async def test_all_8_scoring_tools_registered():
 async def test_policy_approve():
     ex = ToolExecutor()
     r = await ex.execute(
-        "evaluate_segment_policy", _ctx(),
-        segment="DAIRY_FARMER", score=700, confidence_level="HIGH",
+        "evaluate_segment_policy",
+        _ctx(),
+        segment="DAIRY_FARMER",
+        score=700,
+        confidence_level="HIGH",
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert r.data["decision"] == "APPROVE"
@@ -51,8 +59,11 @@ async def test_policy_approve():
 async def test_policy_refer():
     ex = ToolExecutor()
     r = await ex.execute(
-        "evaluate_segment_policy", _ctx(),
-        segment="DAIRY_FARMER", score=550, confidence_level="HIGH",
+        "evaluate_segment_policy",
+        _ctx(),
+        segment="DAIRY_FARMER",
+        score=550,
+        confidence_level="HIGH",
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert r.data["decision"] == "REFER"
@@ -62,8 +73,11 @@ async def test_policy_refer():
 async def test_policy_reject_fraud():
     ex = ToolExecutor()
     r = await ex.execute(
-        "evaluate_segment_policy", _ctx(),
-        segment="DAIRY_FARMER", score=700, fraud_clear=False,
+        "evaluate_segment_policy",
+        _ctx(),
+        segment="DAIRY_FARMER",
+        score=700,
+        fraud_clear=False,
     )
     assert r.data["decision"] == "REJECT"
 
@@ -72,7 +86,8 @@ async def test_policy_reject_fraud():
 async def test_segment_score():
     ex = ToolExecutor()
     r = await ex.execute(
-        "compute_segment_score", _ctx(),
+        "compute_segment_score",
+        _ctx(),
         segment="DAIRY_FARMER",
         features={"pouring_regularity": 0.92, "bureau_score": 720, "bank_stability": 0.85},
     )
@@ -91,8 +106,10 @@ async def test_risk_pricing():
 async def test_fraud_pass():
     ex = ToolExecutor()
     r = await ex.execute(
-        "check_fraud_signals", _ctx(),
-        aadhaar_hash="abc", device_fingerprint="fp1",
+        "check_fraud_signals",
+        _ctx(),
+        aadhaar_hash="abc",
+        device_fingerprint="fp1",
     )
     assert r.data["result"] == "PASS"
 
@@ -101,8 +118,10 @@ async def test_fraud_pass():
 async def test_fraud_velocity():
     ex = ToolExecutor()
     r = await ex.execute(
-        "check_fraud_signals", _ctx(),
-        applications_48h=5, device_fingerprint="fp1",
+        "check_fraud_signals",
+        _ctx(),
+        applications_48h=5,
+        device_fingerprint="fp1",
     )
     assert r.data["result"] in ("HOLD", "REJECT")
 
@@ -111,9 +130,13 @@ async def test_fraud_velocity():
 async def test_cam_generation():
     ex = ToolExecutor()
     r = await ex.execute(
-        "generate_cam", _ctx(),
-        borrower_name="Ramesh", segment="DAIRY_FARMER",
-        score=550, score_grade="B1", income_monthly=42000,
+        "generate_cam",
+        _ctx(),
+        borrower_name="Ramesh",
+        segment="DAIRY_FARMER",
+        score=550,
+        score_grade="B1",
+        income_monthly=42000,
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert "Ramesh" in r.data["borrower_summary"]
@@ -138,8 +161,11 @@ async def test_psl_gig():
 async def test_explainability():
     ex = ToolExecutor()
     r = await ex.execute(
-        "generate_explainability", _ctx(),
-        decision="REJECT", reason_codes=["SCORE_BELOW_MINIMUM"], language="hi",
+        "generate_explainability",
+        _ctx(),
+        decision="REJECT",
+        reason_codes=["SCORE_BELOW_MINIMUM"],
+        language="hi",
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert len(r.data["borrower_facing_reasons"]) == 1

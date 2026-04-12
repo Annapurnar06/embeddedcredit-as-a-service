@@ -57,9 +57,7 @@ class TestWhatsAppAdapter:
 
         adapter = WhatsAppAdapter()
         out = adapter.format_outgoing(
-            OutgoingMessage(
-                channel="whatsapp", channel_user_id="919876543210", content="hi"
-            )
+            OutgoingMessage(channel="whatsapp", channel_user_id="919876543210", content="hi")
         )
         assert out["messaging_product"] == "whatsapp"
         assert out["to"] == "919876543210"

@@ -1,4 +1,5 @@
 """Evaluate monitoring triggers against segment-specific thresholds."""
+
 from __future__ import annotations
 
 from app.tools.registry import AuthorityLevel, ToolCategory, lending_tool
@@ -38,18 +39,20 @@ async def evaluate_monitoring_triggers(
     triggered = []
     safe = []
 
-    for signal in (signals or []):
+    for signal in signals or []:
         stype = signal.get("signal_type", "")
         value = signal.get("value", 0.0)
         threshold = thresholds.get(stype, 0.7)
 
         if value > threshold:
-            triggered.append({
-                "signal_type": stype,
-                "value": value,
-                "threshold": threshold,
-                "severity": "HIGH" if value > threshold * 1.5 else "MEDIUM",
-            })
+            triggered.append(
+                {
+                    "signal_type": stype,
+                    "value": value,
+                    "threshold": threshold,
+                    "severity": "HIGH" if value > threshold * 1.5 else "MEDIUM",
+                }
+            )
         else:
             safe.append(stype)
 

@@ -1,4 +1,3 @@
-
 from app.models.session import SessionState
 from app.policy.behavioral import (
     BehavioralContext,
@@ -62,9 +61,7 @@ class TestFairPracticesLanguage:
         assert r.severity == "error"
 
     def test_allows_neutral(self):
-        r = check_rbi_fair_practices_language(
-            _ctx(agent_response="Your next EMI is due on 15th")
-        )
+        r = check_rbi_fair_practices_language(_ctx(agent_response="Your next EMI is due on 15th"))
         assert r.passed
 
 
@@ -160,22 +157,16 @@ class TestNoOverrideOnAuthority:
 
 class TestPiiMaskedReadback:
     def test_blocks_full_aadhaar(self):
-        r = check_pii_masked_readback(
-            _ctx(agent_response="Your Aadhaar is 1234 5678 9012")
-        )
+        r = check_pii_masked_readback(_ctx(agent_response="Your Aadhaar is 1234 5678 9012"))
         assert not r.passed
         assert r.severity == "error"
 
     def test_blocks_full_pan(self):
-        r = check_pii_masked_readback(
-            _ctx(agent_response="Your PAN is ABCDE1234F")
-        )
+        r = check_pii_masked_readback(_ctx(agent_response="Your PAN is ABCDE1234F"))
         assert not r.passed
 
     def test_allows_masked(self):
-        r = check_pii_masked_readback(
-            _ctx(agent_response="Your Aadhaar ending in XXXX-XXXX-9012")
-        )
+        r = check_pii_masked_readback(_ctx(agent_response="Your Aadhaar ending in XXXX-XXXX-9012"))
         assert r.passed
 
 
@@ -195,9 +186,7 @@ class TestEvaluateAll:
         assert len(violations) >= 2
 
     def test_has_errors(self):
-        results = evaluate_behavioral_policies(
-            _ctx(agent_response="We will take legal action")
-        )
+        results = evaluate_behavioral_policies(_ctx(agent_response="We will take legal action"))
         assert has_errors(results) is True
 
     def test_no_errors_clean(self):

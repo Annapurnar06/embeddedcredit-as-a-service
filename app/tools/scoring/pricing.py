@@ -1,4 +1,5 @@
 """Risk-based pricing -- score to rate band mapping."""
+
 from __future__ import annotations
 
 from decimal import Decimal

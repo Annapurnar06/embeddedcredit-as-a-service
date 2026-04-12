@@ -1,4 +1,5 @@
 """Vehicle telematics data fetch -- mock for trucks, autos, cabs."""
+
 from __future__ import annotations
 
 from app.schemas.borrower import VehicleTelematicsData

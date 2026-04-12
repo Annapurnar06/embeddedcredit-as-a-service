@@ -1,4 +1,5 @@
 """Dairy cooperative data fetch -- mock with realistic schema."""
+
 from __future__ import annotations
 
 from decimal import Decimal

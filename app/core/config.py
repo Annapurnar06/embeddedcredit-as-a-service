@@ -18,6 +18,27 @@ class Settings(BaseSettings):
     can_auto_approve: bool = False
     can_disburse_without_human: bool = False
 
+    # LLM provider config
+    llm_provider: str = "openai"
+    openai_api_key: str = ""
+    anthropic_api_key: str = ""
+    llm_model: str = "gpt-4o"
+    llm_max_tokens: int = 1024
+    llm_temperature: float = 0.3
+
+    # Cartesia Voice AI
+    cartesia_api_key: str = ""
+    stt_api_key: str = ""
+    stt_provider: str = "deepgram"
+
+    # mem0 memory
+    mem0_api_key: str = ""
+
+    # WhatsApp BSP
+    whatsapp_verify_token: str = ""
+    whatsapp_api_token: str = ""
+    whatsapp_phone_number_id: str = ""
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
 

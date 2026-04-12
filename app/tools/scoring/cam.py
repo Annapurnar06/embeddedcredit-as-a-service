@@ -1,4 +1,5 @@
 """Credit Assessment Memo generation for REFER cases."""
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -31,8 +32,7 @@ async def generate_cam(
     return CreditAssessmentMemo(
         loan_application_id=lid,
         borrower_summary=(
-            f"Borrower: {borrower_name}, Segment: {segment}, "
-            f"Score: {score} ({score_grade})"
+            f"Borrower: {borrower_name}, Segment: {segment}, Score: {score} ({score_grade})"
         ),
         financial_summary=(
             f"Monthly Income: INR {income_monthly:,.0f}, "

@@ -27,9 +27,7 @@ def _ctx(state: SessionState = SessionState.UNVERIFIED, confirmed: bool = False)
 @pytest.mark.asyncio
 async def test_verify_aadhaar_otp_send():
     executor = ToolExecutor()
-    result = await executor.execute(
-        "verify_aadhaar_otp", _ctx(), aadhaar_number="123456789012"
-    )
+    result = await executor.execute("verify_aadhaar_otp", _ctx(), aadhaar_number="123456789012")
     assert result.status == ToolResultStatus.SUCCESS
     assert result.data["otp_sent"] is True
 
@@ -52,9 +50,7 @@ async def test_verify_aadhaar_otp_verify():
 @pytest.mark.asyncio
 async def test_verify_aadhaar_otp_invalid_number():
     executor = ToolExecutor()
-    result = await executor.execute(
-        "verify_aadhaar_otp", _ctx(), aadhaar_number="12345"
-    )
+    result = await executor.execute("verify_aadhaar_otp", _ctx(), aadhaar_number="12345")
     assert result.status == ToolResultStatus.SUCCESS
     assert result.data["verified"] is False
 
@@ -89,9 +85,7 @@ async def test_verify_pan():
 @pytest.mark.asyncio
 async def test_verify_pan_invalid():
     executor = ToolExecutor()
-    result = await executor.execute(
-        "verify_pan", _ctx(), pan_number="INVALID"
-    )
+    result = await executor.execute("verify_pan", _ctx(), pan_number="INVALID")
     assert result.status == ToolResultStatus.SUCCESS
     assert result.data["valid"] is False
 

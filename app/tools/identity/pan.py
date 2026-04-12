@@ -1,4 +1,5 @@
 """PAN verification tool (mock NSDL API with Jaro-Winkler name matching)."""
+
 from __future__ import annotations
 
 from app.schemas.borrower import PanVerifyResult
@@ -46,9 +47,7 @@ def _jaro_winkler_similarity(s1: str, s2: str) -> float:
             transpositions += 1
         k += 1
 
-    jaro = (
-        matches / len(s1) + matches / len(s2) + (matches - transpositions / 2) / matches
-    ) / 3
+    jaro = (matches / len(s1) + matches / len(s2) + (matches - transpositions / 2) / matches) / 3
 
     prefix_len = 0
     for i in range(min(4, min(len(s1), len(s2)))):

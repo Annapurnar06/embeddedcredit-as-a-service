@@ -29,9 +29,7 @@ class LendingSession(Base):
     lender_id: Mapped[str] = mapped_column(String(50), index=True)
     channel: Mapped[str] = mapped_column(String(20))
     channel_user_id: Mapped[str] = mapped_column(String(100), index=True)
-    state: Mapped[SessionState] = mapped_column(
-        Enum(SessionState), default=SessionState.UNVERIFIED
-    )
+    state: Mapped[SessionState] = mapped_column(Enum(SessionState), default=SessionState.UNVERIFIED)
     segment: Mapped[str | None] = mapped_column(String(50), nullable=True)
     language: Mapped[str] = mapped_column(String(5), default="hi")
     context_json: Mapped[str | None] = mapped_column(Text, nullable=True)

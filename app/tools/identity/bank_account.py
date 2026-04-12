@@ -1,4 +1,5 @@
 """Bank account verification via penny drop (mock implementation)."""
+
 from __future__ import annotations
 
 from app.schemas.borrower import BankAccountVerifyResult

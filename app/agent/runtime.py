@@ -1,4 +1,5 @@
 """Agent runtime -- orchestrates conversation, tool calling, and behavioral supervision."""
+
 from __future__ import annotations
 
 import uuid
@@ -103,15 +104,15 @@ class AgentRuntime:
 
         if llm_response.tool_calls:
             for tc in llm_response.tool_calls:
-                result = await self._execute_tool(
-                    session, tc, borrower_confirmed
-                )
+                result = await self._execute_tool(session, tc, borrower_confirmed)
                 tools_called.append(tc.tool_name)
-                tool_results.append({
-                    "tool": tc.tool_name,
-                    "status": result.status.value,
-                    "data": result.data,
-                })
+                tool_results.append(
+                    {
+                        "tool": tc.tool_name,
+                        "status": result.status.value,
+                        "data": result.data,
+                    }
+                )
 
                 if (
                     result.status == ToolResultStatus.SUCCESS
@@ -119,9 +120,7 @@ class AgentRuntime:
                     and result.data
                     and result.data.get("verified")
                 ):
-                    session.state = SessionMachine.transition(
-                        session.state, SessionState.VERIFIED
-                    )
+                    session.state = SessionMachine.transition(session.state, SessionState.VERIFIED)
                     self.audit.log_state_transition(
                         session.session_id,
                         state_before,
@@ -212,9 +211,7 @@ class AgentRuntime:
             maker_approved=session.maker_approved,
             kfs_generated=session.kfs_generated,
         )
-        return await self.executor.execute(
-            tool_call.tool_name, ctx, **tool_call.arguments
-        )
+        return await self.executor.execute(tool_call.tool_name, ctx, **tool_call.arguments)
 
     def _sanitize_response(self, response: str, blocking_rule: str) -> str:
         if blocking_rule == "rbi_fair_practices_language":
@@ -223,10 +220,7 @@ class AgentRuntime:
                 "Kya main aapki kisi aur tarah se madad kar sakta hoon?"
             )
         if blocking_rule == "pii_masked_readback":
-            return (
-                "Aapki jaankari surakshit hai. "
-                "Main sirf antim 4 digit bata sakta hoon."
-            )
+            return "Aapki jaankari surakshit hai. Main sirf antim 4 digit bata sakta hoon."
         if blocking_rule == "no_disclosure_before_verify":
             return (
                 "Pehle aapki pehchaan verify karni hogi. "

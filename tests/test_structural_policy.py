@@ -1,4 +1,3 @@
-
 from app.models.session import SessionState
 from app.policy.structural import (
     PolicyContext,
@@ -183,9 +182,7 @@ class TestMakerChecker:
 
 class TestEvaluateAll:
     def test_all_7_rules_run(self):
-        results = evaluate_structural_policies(
-            _tool(), _ctx()
-        )
+        results = evaluate_structural_policies(_tool(), _ctx())
         assert len(results) == 7
 
     def test_first_failure_captured(self):

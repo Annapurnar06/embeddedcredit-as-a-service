@@ -1,4 +1,5 @@
 """Chat API -- generic endpoint for all channels."""
+
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException

@@ -1,4 +1,5 @@
 """Execute auto-interventions: moratorium, restructure, nudge."""
+
 from __future__ import annotations
 
 import uuid

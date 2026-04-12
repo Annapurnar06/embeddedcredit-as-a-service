@@ -1,4 +1,5 @@
 """LLM client abstraction -- single provider (OpenAI) with structured output."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -61,30 +62,41 @@ class MockLLMClient:
 
     def _should_call_tool(self, user_msg: str, messages: list[LLMMessage]) -> bool:
         tool_triggers = [
-            "aadhaar", "verify", "loan", "apply", "check", "status",
-            "payment", "emi", "moratorium", "score", "bureau",
+            "aadhaar",
+            "verify",
+            "loan",
+            "apply",
+            "check",
+            "status",
+            "payment",
+            "emi",
+            "moratorium",
+            "score",
+            "bureau",
         ]
         return any(t in user_msg for t in tool_triggers)
 
-    def _route_tool_call(
-        self, user_msg: str, messages: list[LLMMessage]
-    ) -> LLMResponse:
+    def _route_tool_call(self, user_msg: str, messages: list[LLMMessage]) -> LLMResponse:
         if any(w in user_msg for w in ["aadhaar", "verify", "kyc"]):
             return LLMResponse(
-                tool_calls=[ToolCall(
-                    tool_name="verify_aadhaar_otp",
-                    arguments={"aadhaar_number": "123456789012"},
-                )],
+                tool_calls=[
+                    ToolCall(
+                        tool_name="verify_aadhaar_otp",
+                        arguments={"aadhaar_number": "123456789012"},
+                    )
+                ],
                 finish_reason="tool_calls",
                 model=self.model,
             )
 
         if any(w in user_msg for w in ["pan"]):
             return LLMResponse(
-                tool_calls=[ToolCall(
-                    tool_name="verify_pan",
-                    arguments={"pan_number": "ABCDE1234F", "aadhaar_name": "Ramesh Patel"},
-                )],
+                tool_calls=[
+                    ToolCall(
+                        tool_name="verify_pan",
+                        arguments={"pan_number": "ABCDE1234F", "aadhaar_name": "Ramesh Patel"},
+                    )
+                ],
                 finish_reason="tool_calls",
                 model=self.model,
             )
@@ -98,10 +110,12 @@ class MockLLMClient:
 
         if any(w in user_msg for w in ["status", "check"]):
             return LLMResponse(
-                tool_calls=[ToolCall(
-                    tool_name="get_loan_status",
-                    arguments={},
-                )],
+                tool_calls=[
+                    ToolCall(
+                        tool_name="get_loan_status",
+                        arguments={},
+                    )
+                ],
                 finish_reason="tool_calls",
                 model=self.model,
             )

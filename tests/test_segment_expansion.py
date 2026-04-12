@@ -1,4 +1,5 @@
 """Tests for expanded segments: data tools, scoring, product design, prompts."""
+
 import uuid
 
 import pytest
@@ -35,21 +36,48 @@ def _ctx(
 
 
 ALL_NEW_SEGMENTS = [
-    "WAREHOUSE_RECEIPT", "GOLD_LOAN", "EV_FINANCING", "SOLAR_FINANCING",
-    "SHG_MEMBER", "TRADER_AGRI", "MSE_MANUFACTURING", "STREET_VENDOR",
-    "STUDENT_HOUSING", "TRUCK_OPERATOR", "AUTO_RICKSHAW", "BEAUTY_SALON",
-    "DHABA_RESTAURANT", "POULTRY_FARMER", "FISHERY", "HANDLOOM_WEAVER",
-    "TAILORING_UNIT", "MEDICAL_SHOP", "SUGARCANE_FARMER", "VEGETABLE_GROWER",
-    "FPO_ENTITY", "NBFC_BC", "CONSTRUCTION_WORKER", "DOMESTIC_WORKER",
-    "E_RICKSHAW", "MICRO_HOUSING", "DAIRY_PROCESSOR", "AGRI_INPUT_DEALER",
-    "RENTAL_INCOME", "COTTON_FARMER", "RICE_MILLER", "EDTECH_STUDENT",
-    "HEALTH_CLINIC", "MICRO_CONTRACTOR", "CAB_DRIVER",
+    "WAREHOUSE_RECEIPT",
+    "GOLD_LOAN",
+    "EV_FINANCING",
+    "SOLAR_FINANCING",
+    "SHG_MEMBER",
+    "TRADER_AGRI",
+    "MSE_MANUFACTURING",
+    "STREET_VENDOR",
+    "STUDENT_HOUSING",
+    "TRUCK_OPERATOR",
+    "AUTO_RICKSHAW",
+    "BEAUTY_SALON",
+    "DHABA_RESTAURANT",
+    "POULTRY_FARMER",
+    "FISHERY",
+    "HANDLOOM_WEAVER",
+    "TAILORING_UNIT",
+    "MEDICAL_SHOP",
+    "SUGARCANE_FARMER",
+    "VEGETABLE_GROWER",
+    "FPO_ENTITY",
+    "NBFC_BC",
+    "CONSTRUCTION_WORKER",
+    "DOMESTIC_WORKER",
+    "E_RICKSHAW",
+    "MICRO_HOUSING",
+    "DAIRY_PROCESSOR",
+    "AGRI_INPUT_DEALER",
+    "RENTAL_INCOME",
+    "COTTON_FARMER",
+    "RICE_MILLER",
+    "EDTECH_STUDENT",
+    "HEALTH_CLINIC",
+    "MICRO_CONTRACTOR",
+    "CAB_DRIVER",
 ]
 
 ORIGINAL_SEGMENTS = ["DAIRY_FARMER", "KIRANA_SHOP", "GIG_WORKER"]
 
 
 # --- Segment YAML loading ---
+
 
 def test_all_33_segments_load():
     SegmentRegistry.clear()
@@ -79,23 +107,21 @@ def test_segment_yaml_structure():
 
 # --- Scoring weights ---
 
+
 def test_all_segments_have_scoring_weights():
     for seg_id in ORIGINAL_SEGMENTS + ALL_NEW_SEGMENTS:
         assert seg_id in SEGMENT_WEIGHTS, f"Missing weights for {seg_id}"
         weights = SEGMENT_WEIGHTS[seg_id]
         total = sum(weights.values())
-        assert abs(total - 1.0) < 0.02, (
-            f"Weights for {seg_id} sum to {total}, expected ~1.0"
-        )
+        assert abs(total - 1.0) < 0.02, f"Weights for {seg_id} sum to {total}, expected ~1.0"
 
 
 # --- Prompt context ---
 
+
 def test_all_segments_have_prompt_context():
     for seg_id in ORIGINAL_SEGMENTS + ALL_NEW_SEGMENTS:
-        assert seg_id in SEGMENT_CONTEXT, (
-            f"Missing prompt context for {seg_id}"
-        )
+        assert seg_id in SEGMENT_CONTEXT, f"Missing prompt context for {seg_id}"
         assert len(SEGMENT_CONTEXT[seg_id]) > 50
 
 
@@ -163,6 +189,7 @@ async def test_new_data_tools_blocked_unverified():
 
 # --- Segment scoring ---
 
+
 @pytest.mark.asyncio
 async def test_segment_scoring_new_segments():
     from app.tools.scoring.score import compute_segment_score
@@ -178,6 +205,7 @@ async def test_segment_scoring_new_segments():
 
 
 # --- Product design ---
+
 
 @pytest.mark.asyncio
 async def test_product_design_new_segments():
@@ -199,17 +227,28 @@ async def test_product_design_new_segments():
 
 # --- Moratorium triggers ---
 
+
 def test_moratorium_triggers_coverage():
     segments_with_triggers = {
-        "DAIRY_FARMER", "WAREHOUSE_RECEIPT", "EV_FINANCING",
-        "SOLAR_FINANCING", "SHG_MEMBER", "POULTRY_FARMER",
-        "FISHERY", "SUGARCANE_FARMER", "VEGETABLE_GROWER",
-        "COTTON_FARMER", "CONSTRUCTION_WORKER", "STREET_VENDOR",
-        "TRUCK_OPERATOR", "AUTO_RICKSHAW", "E_RICKSHAW",
-        "CAB_DRIVER", "MICRO_HOUSING", "EDTECH_STUDENT",
+        "DAIRY_FARMER",
+        "WAREHOUSE_RECEIPT",
+        "EV_FINANCING",
+        "SOLAR_FINANCING",
+        "SHG_MEMBER",
+        "POULTRY_FARMER",
+        "FISHERY",
+        "SUGARCANE_FARMER",
+        "VEGETABLE_GROWER",
+        "COTTON_FARMER",
+        "CONSTRUCTION_WORKER",
+        "STREET_VENDOR",
+        "TRUCK_OPERATOR",
+        "AUTO_RICKSHAW",
+        "E_RICKSHAW",
+        "CAB_DRIVER",
+        "MICRO_HOUSING",
+        "EDTECH_STUDENT",
     }
     for seg_id in segments_with_triggers:
         triggers = MORATORIUM_TRIGGERS.get(seg_id, [])
-        assert len(triggers) >= 1, (
-            f"Missing moratorium triggers for {seg_id}"
-        )
+        assert len(triggers) >= 1, f"Missing moratorium triggers for {seg_id}"

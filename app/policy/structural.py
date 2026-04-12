@@ -1,4 +1,5 @@
 """7 structural policy rules -- deterministic, no LLM, run BEFORE every tool call."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -45,9 +46,7 @@ def check_identity_gate(tool: ToolDefinition, ctx: PolicyContext) -> PolicyCheck
     return PolicyCheckResult(rule_name="identity_gate", passed=True)
 
 
-def check_write_confirmation(
-    tool: ToolDefinition, ctx: PolicyContext
-) -> PolicyCheckResult:
+def check_write_confirmation(tool: ToolDefinition, ctx: PolicyContext) -> PolicyCheckResult:
     """Block write tools without explicit borrower confirmation."""
     if tool.requires_confirmation and not ctx.borrower_confirmed:
         return PolicyCheckResult(
@@ -75,9 +74,7 @@ def check_kfs_mandatory(tool: ToolDefinition, ctx: PolicyContext) -> PolicyCheck
     return PolicyCheckResult(rule_name="kfs_mandatory", passed=True)
 
 
-def check_bureau_velocity(
-    tool: ToolDefinition, ctx: PolicyContext
-) -> PolicyCheckResult:
+def check_bureau_velocity(tool: ToolDefinition, ctx: PolicyContext) -> PolicyCheckResult:
     """Block bureau pull if >N pulls for same Aadhaar in 48h."""
     if tool.name == "pull_credit_bureau":
         max_pulls = settings.bureau_pull_max_per_aadhaar_48h
@@ -94,9 +91,7 @@ def check_bureau_velocity(
     return PolicyCheckResult(rule_name="bureau_velocity", passed=True)
 
 
-def check_cooling_off_period(
-    tool: ToolDefinition, ctx: PolicyContext
-) -> PolicyCheckResult:
+def check_cooling_off_period(tool: ToolDefinition, ctx: PolicyContext) -> PolicyCheckResult:
     """Block disbursement within cooling-off period (RBI mandate)."""
     if (
         tool.name == "execute_disbursement"
@@ -115,9 +110,7 @@ def check_cooling_off_period(
     return PolicyCheckResult(rule_name="cooling_off_period", passed=True)
 
 
-def check_consent_required(
-    tool: ToolDefinition, ctx: PolicyContext
-) -> PolicyCheckResult:
+def check_consent_required(tool: ToolDefinition, ctx: PolicyContext) -> PolicyCheckResult:
     """Block ULI/AA data fetch without valid consent token."""
     consent_tools = {
         "fetch_aa_bank_data",

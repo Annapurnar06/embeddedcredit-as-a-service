@@ -1,4 +1,5 @@
 """Explainability -- reason codes for borrower-facing rejection reasons."""
+
 from __future__ import annotations
 
 from app.schemas.loan import ExplainabilityResult

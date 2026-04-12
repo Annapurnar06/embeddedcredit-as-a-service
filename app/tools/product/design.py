@@ -1,4 +1,5 @@
 """Dynamic product design based on approved decision + borrower profile."""
+
 from __future__ import annotations
 
 from decimal import Decimal
@@ -130,14 +131,10 @@ async def design_dynamic_product(
         "MICRO_CONTRACTOR": ("MILESTONE_LINKED", 18, None),
         "CAB_DRIVER": ("DAILY_PAYOUT_LINKED", 36, "MOTOR_COMPREHENSIVE"),
     }
-    schedule_type, default_tenure, insurance = schedule_map.get(
-        segment, ("EMI", 12, None)
-    )
+    schedule_type, default_tenure, insurance = schedule_map.get(segment, ("EMI", 12, None))
 
     amount = Decimal(str(min(requested_amount, max_emi * default_tenure * 0.8)))
-    total_interest = amount * Decimal(str(interest_rate / 100)) * Decimal(
-        str(default_tenure / 12)
-    )
+    total_interest = amount * Decimal(str(interest_rate / 100)) * Decimal(str(default_tenure / 12))
     total_repayment = amount + total_interest
     processing_fee = amount * Decimal("0.02")
 

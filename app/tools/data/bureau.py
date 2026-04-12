@@ -1,4 +1,5 @@
 """Credit bureau pull -- DESTRUCTIVE tool (hard inquiry)."""
+
 from __future__ import annotations
 
 from decimal import Decimal

@@ -1,4 +1,5 @@
 """Audit trail and trace system -- append-only logging for RBI compliance."""
+
 from __future__ import annotations
 
 import re
@@ -149,9 +150,7 @@ class AuditTrail:
     def get_full_trail(self, session_id: uuid.UUID) -> list[dict[str, Any]]:
         logs = self.get_session_logs(session_id)
         tools = self.get_session_tools(session_id)
-        combined = [
-            {**log, "_type": "audit_log"} for log in logs
-        ] + [
+        combined = [{**log, "_type": "audit_log"} for log in logs] + [
             {**tool, "_type": "tool_execution"} for tool in tools
         ]
         return sorted(combined, key=lambda x: x["created_at"])
@@ -172,11 +171,13 @@ class EventEmitter:
         self._events: list[dict[str, Any]] = []
 
     def emit(self, topic: str, data: dict[str, Any]) -> None:
-        self._events.append({
-            "topic": topic,
-            "data": data,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        })
+        self._events.append(
+            {
+                "topic": topic,
+                "data": data,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }
+        )
 
     def get_events(self, topic: str | None = None) -> list[dict[str, Any]]:
         if topic:

@@ -1,4 +1,5 @@
 """Device score computation -- DeviceConnect equivalent."""
+
 from __future__ import annotations
 
 from app.schemas.borrower import DeviceScore

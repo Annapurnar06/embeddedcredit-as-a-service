@@ -1,4 +1,5 @@
 """Segment scoring -- rule-based v1 (weighted sum from YAML config)."""
+
 from __future__ import annotations
 
 from app.schemas.loan import ScoreResult

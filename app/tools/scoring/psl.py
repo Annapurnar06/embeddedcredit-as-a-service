@@ -1,4 +1,5 @@
 """Priority Sector Lending classification."""
+
 from __future__ import annotations
 
 from app.schemas.loan import PSLClassification
@@ -31,7 +32,6 @@ async def check_psl_classification(
         sub_category=sub_cat,
         eligible=eligible,
         reason=(
-            f"Segment {segment} classifies as {category}"
-            + (f" / {sub_cat}" if sub_cat else "")
+            f"Segment {segment} classifies as {category}" + (f" / {sub_cat}" if sub_cat else "")
         ),
     ).model_dump()

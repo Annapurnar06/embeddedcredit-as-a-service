@@ -1,4 +1,5 @@
 """No Objection Certificate on loan closure."""
+
 from __future__ import annotations
 
 import uuid

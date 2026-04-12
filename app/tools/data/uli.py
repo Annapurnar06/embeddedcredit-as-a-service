@@ -1,4 +1,5 @@
 """ULI (Unified Lending Interface) parallel data fetch -- mock implementation."""
+
 from __future__ import annotations
 
 from app.schemas.borrower import ULIData

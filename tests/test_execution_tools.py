@@ -29,8 +29,12 @@ def _ctx(state=SessionState.CONFIRMED, confirmed=True, maker=True, kfs=False):
 @pytest.mark.asyncio
 async def test_all_6_execution_tools_registered():
     names = {
-        "generate_kfs", "initiate_esign", "enroll_insurance",
-        "setup_enach_mandate", "execute_disbursement", "register_cersai",
+        "generate_kfs",
+        "initiate_esign",
+        "enroll_insurance",
+        "setup_enach_mandate",
+        "execute_disbursement",
+        "register_cersai",
     }
     for name in names:
         assert ToolRegistry.get(name) is not None
@@ -71,9 +75,13 @@ async def test_generate_kfs():
         lender_id="L1",
     )
     r = await ex.execute(
-        "generate_kfs", ctx,
-        borrower_name="Ramesh", lender_name="Test NBFC",
-        amount=100000, rate=15.0, tenure_months=18,
+        "generate_kfs",
+        ctx,
+        borrower_name="Ramesh",
+        lender_name="Test NBFC",
+        amount=100000,
+        rate=15.0,
+        tenure_months=18,
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert r.data["cooling_off_period_days"] == 3
@@ -91,8 +99,10 @@ async def test_esign():
 async def test_insurance():
     ex = ToolExecutor()
     r = await ex.execute(
-        "enroll_insurance", _ctx(),
-        insurance_type="PASHU_BIMA", sum_insured=80000,
+        "enroll_insurance",
+        _ctx(),
+        insurance_type="PASHU_BIMA",
+        sum_insured=80000,
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert r.data["status"] == "ENROLLED"
@@ -102,8 +112,10 @@ async def test_insurance():
 async def test_enach():
     ex = ToolExecutor()
     r = await ex.execute(
-        "setup_enach_mandate", _ctx(),
-        max_amount=10000, frequency="monthly",
+        "setup_enach_mandate",
+        _ctx(),
+        max_amount=10000,
+        frequency="monthly",
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert r.data["mode"] == "eNACH"
@@ -113,8 +125,11 @@ async def test_enach():
 async def test_disbursement():
     ex = ToolExecutor()
     r = await ex.execute(
-        "execute_disbursement", _ctx(),
-        amount=100000, mode="UPI", beneficiary_account="12345678901234",
+        "execute_disbursement",
+        _ctx(),
+        amount=100000,
+        mode="UPI",
+        beneficiary_account="12345678901234",
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert r.data["status"] == "SUCCESS"
@@ -130,8 +145,10 @@ async def test_cersai():
         lender_id="L1",
     )
     r = await ex.execute(
-        "register_cersai", ctx,
-        asset_type="VEHICLE", asset_description="Tractor",
+        "register_cersai",
+        ctx,
+        asset_type="VEHICLE",
+        asset_description="Tractor",
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert r.data["status"] == "REGISTERED"
@@ -144,8 +161,12 @@ async def test_full_execution_flow():
     ctx = _ctx()
 
     kfs = await ex.execute(
-        "generate_kfs", ctx,
-        borrower_name="Ramesh", amount=100000, rate=15.0, tenure_months=18,
+        "generate_kfs",
+        ctx,
+        borrower_name="Ramesh",
+        amount=100000,
+        rate=15.0,
+        tenure_months=18,
     )
     assert kfs.status == ToolResultStatus.SUCCESS
 
@@ -153,16 +174,24 @@ async def test_full_execution_flow():
     assert esign.status == ToolResultStatus.SUCCESS
 
     ins = await ex.execute(
-        "enroll_insurance", ctx, insurance_type="PASHU_BIMA", sum_insured=80000,
+        "enroll_insurance",
+        ctx,
+        insurance_type="PASHU_BIMA",
+        sum_insured=80000,
     )
     assert ins.status == ToolResultStatus.SUCCESS
 
     mandate = await ex.execute(
-        "setup_enach_mandate", ctx, max_amount=10000,
+        "setup_enach_mandate",
+        ctx,
+        max_amount=10000,
     )
     assert mandate.status == ToolResultStatus.SUCCESS
 
     disb = await ex.execute(
-        "execute_disbursement", ctx, amount=100000, mode="UPI",
+        "execute_disbursement",
+        ctx,
+        amount=100000,
+        mode="UPI",
     )
     assert disb.status == ToolResultStatus.SUCCESS

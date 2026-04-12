@@ -1,4 +1,5 @@
 """Confirmation detection -- parse borrower utterances for consent signals."""
+
 from __future__ import annotations
 
 import re

@@ -4,6 +4,7 @@ These rules check the AGENT'S RESPONSE text for policy violations.
 In production, these are LLM-evaluated. For now, we use regex/heuristic checks
 that can be swapped for LLM calls later.
 """
+
 from __future__ import annotations
 
 import re
@@ -99,9 +100,7 @@ def check_psl_accurate_classification(ctx: BehavioralContext) -> BehavioralCheck
             passed=False,
             severity="error",
             reason="Agent suggested PSL misclassification.",
-            suggested_fix=(
-                "Remove PSL references. Classification is automatic based on purpose."
-            ),
+            suggested_fix=("Remove PSL references. Classification is automatic based on purpose."),
         )
     return BehavioralCheckResult(rule_name="psl_accurate_classification", passed=True)
 

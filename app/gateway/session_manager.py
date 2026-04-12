@@ -1,4 +1,5 @@
 """Session manager -- maps channel user IDs to agent sessions."""
+
 from __future__ import annotations
 
 import uuid
@@ -33,9 +34,7 @@ class SessionManager:
             )
         return self._sessions[key]
 
-    def get(
-        self, channel: str, channel_user_id: str, lender_id: str
-    ) -> AgentSession | None:
+    def get(self, channel: str, channel_user_id: str, lender_id: str) -> AgentSession | None:
         return self._sessions.get(self._key(channel, channel_user_id, lender_id))
 
     def remove(self, channel: str, channel_user_id: str, lender_id: str) -> None:

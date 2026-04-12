@@ -1,4 +1,5 @@
 """Channel adapter interface -- generic, channel-agnostic."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -24,12 +25,10 @@ class OutgoingMessage:
 
 class ChannelAdapter(ABC):
     @abstractmethod
-    def parse_incoming(self, raw: dict[str, Any]) -> IncomingMessage:
-        ...
+    def parse_incoming(self, raw: dict[str, Any]) -> IncomingMessage: ...
 
     @abstractmethod
-    def format_outgoing(self, message: OutgoingMessage) -> dict[str, Any]:
-        ...
+    def format_outgoing(self, message: OutgoingMessage) -> dict[str, Any]: ...
 
 
 class WebChatAdapter(ChannelAdapter):
@@ -66,9 +65,7 @@ class WhatsAppAdapter(ChannelAdapter):
             metadata={
                 "message_id": msg.get("id", ""),
                 "timestamp": msg.get("timestamp", ""),
-                "phone_number_id": value.get("metadata", {}).get(
-                    "phone_number_id", ""
-                ),
+                "phone_number_id": value.get("metadata", {}).get("phone_number_id", ""),
             },
         )
 

@@ -28,8 +28,10 @@ def _ctx(state=SessionState.VERIFIED, confirmed=False, maker=False):
 @pytest.mark.asyncio
 async def test_all_5_monitoring_tools_registered():
     names = {
-        "poll_monitoring_signals", "evaluate_monitoring_triggers",
-        "execute_auto_intervention", "evaluate_graduation",
+        "poll_monitoring_signals",
+        "evaluate_monitoring_triggers",
+        "execute_auto_intervention",
+        "evaluate_graduation",
         "schedule_monitoring_job",
     }
     for name in names:
@@ -49,8 +51,10 @@ async def test_poll_signals():
 async def test_evaluate_triggers_none():
     ex = ToolExecutor()
     r = await ex.execute(
-        "evaluate_monitoring_triggers", _ctx(),
-        segment="DAIRY_FARMER", signals=[],
+        "evaluate_monitoring_triggers",
+        _ctx(),
+        segment="DAIRY_FARMER",
+        signals=[],
     )
     assert r.data["recommended_action"] == "NONE"
 
@@ -64,8 +68,10 @@ async def test_evaluate_triggers_breach():
         {"signal_type": "dpd_change", "value": 0.95},
     ]
     r = await ex.execute(
-        "evaluate_monitoring_triggers", _ctx(),
-        segment="DAIRY_FARMER", signals=signals,
+        "evaluate_monitoring_triggers",
+        _ctx(),
+        segment="DAIRY_FARMER",
+        signals=signals,
     )
     assert r.data["recommended_action"] == "ESCALATE"
     assert len(r.data["triggered"]) == 3
@@ -76,8 +82,10 @@ async def test_evaluate_triggers_single():
     ex = ToolExecutor()
     signals = [{"signal_type": "bank_txn_drop", "value": 0.5}]
     r = await ex.execute(
-        "evaluate_monitoring_triggers", _ctx(),
-        segment="DAIRY_FARMER", signals=signals,
+        "evaluate_monitoring_triggers",
+        _ctx(),
+        segment="DAIRY_FARMER",
+        signals=signals,
     )
     assert r.data["recommended_action"] == "WATCH"
 
@@ -86,8 +94,10 @@ async def test_evaluate_triggers_single():
 async def test_auto_intervention_nudge():
     ex = ToolExecutor()
     r = await ex.execute(
-        "execute_auto_intervention", _ctx(confirmed=True, maker=True),
-        intervention_type="nudge", reason="missed payment",
+        "execute_auto_intervention",
+        _ctx(confirmed=True, maker=True),
+        intervention_type="nudge",
+        reason="missed payment",
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert r.data["action"] == "SEND_NUDGE"
@@ -98,8 +108,10 @@ async def test_auto_intervention_nudge():
 async def test_auto_intervention_moratorium():
     ex = ToolExecutor()
     r = await ex.execute(
-        "execute_auto_intervention", _ctx(confirmed=True, maker=True),
-        intervention_type="moratorium", reason="flood",
+        "execute_auto_intervention",
+        _ctx(confirmed=True, maker=True),
+        intervention_type="moratorium",
+        reason="flood",
     )
     assert r.data["action"] == "AUTO_MORATORIUM"
     assert r.data["status"] == "PENDING_REVIEW"
@@ -109,9 +121,12 @@ async def test_auto_intervention_moratorium():
 async def test_graduation_eligible():
     ex = ToolExecutor()
     r = await ex.execute(
-        "evaluate_graduation", _ctx(),
-        months_on_book=12, on_time_rate=0.97,
-        current_rate=15.0, current_limit=100000,
+        "evaluate_graduation",
+        _ctx(),
+        months_on_book=12,
+        on_time_rate=0.97,
+        current_rate=15.0,
+        current_limit=100000,
     )
     assert r.data["eligible"] is True
     assert r.data["offer_count"] >= 2
@@ -121,8 +136,10 @@ async def test_graduation_eligible():
 async def test_graduation_not_eligible():
     ex = ToolExecutor()
     r = await ex.execute(
-        "evaluate_graduation", _ctx(),
-        months_on_book=3, on_time_rate=0.7,
+        "evaluate_graduation",
+        _ctx(),
+        months_on_book=3,
+        on_time_rate=0.7,
     )
     assert r.data["eligible"] is False
     assert r.data["offer_count"] == 0
@@ -132,7 +149,8 @@ async def test_graduation_not_eligible():
 async def test_schedule_job():
     ex = ToolExecutor()
     r = await ex.execute(
-        "schedule_monitoring_job", _ctx(confirmed=True, maker=True),
+        "schedule_monitoring_job",
+        _ctx(confirmed=True, maker=True),
         segment="KIRANA_SHOP",
     )
     assert r.status == ToolResultStatus.SUCCESS
@@ -144,7 +162,9 @@ async def test_schedule_job():
 async def test_schedule_job_override_frequency():
     ex = ToolExecutor()
     r = await ex.execute(
-        "schedule_monitoring_job", _ctx(confirmed=True, maker=True),
-        segment="DAIRY_FARMER", override_frequency="daily",
+        "schedule_monitoring_job",
+        _ctx(confirmed=True, maker=True),
+        segment="DAIRY_FARMER",
+        override_frequency="daily",
     )
     assert r.data["frequency"] == "daily"

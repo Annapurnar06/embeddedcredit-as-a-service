@@ -67,9 +67,7 @@ class ToolDefinition:
 
     def __post_init__(self) -> None:
         if self.min_session_state is None:
-            self.min_session_state = CATEGORY_MIN_STATE.get(
-                self.category, SessionState.VERIFIED
-            )
+            self.min_session_state = CATEGORY_MIN_STATE.get(self.category, SessionState.VERIFIED)
 
 
 class ToolRegistry:

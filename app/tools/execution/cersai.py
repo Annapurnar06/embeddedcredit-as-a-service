@@ -1,4 +1,5 @@
 """CERSAI charge registration for secured loans -- mock."""
+
 from __future__ import annotations
 
 import uuid

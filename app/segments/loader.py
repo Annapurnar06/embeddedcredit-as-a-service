@@ -1,4 +1,5 @@
 """Segment template loader -- reads YAML, validates schema, caches."""
+
 from __future__ import annotations
 
 from pathlib import Path

@@ -17,16 +17,16 @@ def setup():
 
 
 def _ctx(state=SessionState.VERIFIED):
-    return ExecutionContext(
-        session_id=uuid.uuid4(), session_state=state, lender_id="L1"
-    )
+    return ExecutionContext(session_id=uuid.uuid4(), session_state=state, lender_id="L1")
 
 
 @pytest.mark.asyncio
 async def test_all_5_product_tools_registered():
     names = {
-        "design_dynamic_product", "generate_seasonal_schedule",
-        "generate_daily_micro_schedule", "generate_payout_linked_schedule",
+        "design_dynamic_product",
+        "generate_seasonal_schedule",
+        "generate_daily_micro_schedule",
+        "generate_payout_linked_schedule",
         "compute_insurance_premium",
     }
     for name in names:
@@ -37,8 +37,11 @@ async def test_all_5_product_tools_registered():
 async def test_design_dairy_product():
     ex = ToolExecutor()
     r = await ex.execute(
-        "design_dynamic_product", _ctx(),
-        segment="DAIRY_FARMER", score=680, requested_amount=100000,
+        "design_dynamic_product",
+        _ctx(),
+        segment="DAIRY_FARMER",
+        score=680,
+        requested_amount=100000,
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert r.data["schedule_type"] == "SEASONAL_DYNAMIC"
@@ -50,8 +53,11 @@ async def test_design_dairy_product():
 async def test_design_kirana_product():
     ex = ToolExecutor()
     r = await ex.execute(
-        "design_dynamic_product", _ctx(),
-        segment="KIRANA_SHOP", score=600, requested_amount=200000,
+        "design_dynamic_product",
+        _ctx(),
+        segment="KIRANA_SHOP",
+        score=600,
+        requested_amount=200000,
     )
     assert r.data["schedule_type"] == "DAILY_MICRO"
     assert r.data["insurance_type"] is None
@@ -61,8 +67,11 @@ async def test_design_kirana_product():
 async def test_seasonal_schedule():
     ex = ToolExecutor()
     r = await ex.execute(
-        "generate_seasonal_schedule", _ctx(),
-        amount=100000, rate=15.0, tenure_months=12,
+        "generate_seasonal_schedule",
+        _ctx(),
+        amount=100000,
+        rate=15.0,
+        tenure_months=12,
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert len(r.data["entries"]) == 12
@@ -74,8 +83,11 @@ async def test_seasonal_schedule():
 async def test_daily_micro_schedule():
     ex = ToolExecutor()
     r = await ex.execute(
-        "generate_daily_micro_schedule", _ctx(),
-        amount=100000, rate=16.0, tenure_months=12,
+        "generate_daily_micro_schedule",
+        _ctx(),
+        amount=100000,
+        rate=16.0,
+        tenure_months=12,
     )
     assert r.data["schedule_type"] == "DAILY_MICRO"
     assert r.data["working_days_per_month"] == 26
@@ -85,8 +97,11 @@ async def test_daily_micro_schedule():
 async def test_payout_linked_schedule():
     ex = ToolExecutor()
     r = await ex.execute(
-        "generate_payout_linked_schedule", _ctx(),
-        amount=50000, avg_monthly_payout=22000, deduction_rate=0.15,
+        "generate_payout_linked_schedule",
+        _ctx(),
+        amount=50000,
+        avg_monthly_payout=22000,
+        deduction_rate=0.15,
     )
     assert r.data["schedule_type"] == "PAYOUT_LINKED"
     assert r.data["deduction_rate"] == 0.15
@@ -96,8 +111,10 @@ async def test_payout_linked_schedule():
 async def test_insurance_premium():
     ex = ToolExecutor()
     r = await ex.execute(
-        "compute_insurance_premium", _ctx(),
-        insurance_type="PASHU_BIMA", sum_insured=100000,
+        "compute_insurance_premium",
+        _ctx(),
+        insurance_type="PASHU_BIMA",
+        sum_insured=100000,
     )
     assert r.status == ToolResultStatus.SUCCESS
     assert float(r.data["annual_premium"]) > 0

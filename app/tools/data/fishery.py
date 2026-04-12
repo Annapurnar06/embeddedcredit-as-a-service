@@ -1,4 +1,5 @@
 """Fishery cooperative data fetch -- mock with realistic schema."""
+
 from __future__ import annotations
 
 from app.schemas.borrower import FisheryCooperativeData

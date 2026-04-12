@@ -1,4 +1,5 @@
 """Account Aggregator consent initiation (mock Setu AA schema)."""
+
 from __future__ import annotations
 
 import uuid

@@ -1,4 +1,5 @@
 """AML/sanctions/fraud blacklist check (mock implementation)."""
+
 from __future__ import annotations
 
 from app.schemas.borrower import NegativeListResult
@@ -17,9 +18,7 @@ async def check_negative_list(
     aadhaar_hash: str = "",
 ) -> dict:
     if not aadhaar_hash:
-        return NegativeListResult(
-            clear=False, flags=["MISSING_IDENTIFIER"]
-        ).model_dump()
+        return NegativeListResult(clear=False, flags=["MISSING_IDENTIFIER"]).model_dump()
 
     return NegativeListResult(
         clear=True,

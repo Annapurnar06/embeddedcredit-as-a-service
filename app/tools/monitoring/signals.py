@@ -1,4 +1,5 @@
 """Poll external signals: bank txns, cooperative data, platform payout changes."""
+
 from __future__ import annotations
 
 import random
@@ -18,18 +19,23 @@ async def poll_monitoring_signals(
     signal_types: list[str] | None = None,
 ) -> dict:
     types = signal_types or [
-        "bank_txn_drop", "cooperative_pouring_drop",
-        "platform_deactivation", "dpd_change", "bureau_alert",
+        "bank_txn_drop",
+        "cooperative_pouring_drop",
+        "platform_deactivation",
+        "dpd_change",
+        "bureau_alert",
     ]
     signals = []
     for stype in types:
-        signals.append({
-            "signal_type": stype,
-            "value": random.uniform(0.0, 1.0),
-            "threshold": 0.7,
-            "triggered": random.random() > 0.8,
-            "source": f"mock_{stype}_api",
-        })
+        signals.append(
+            {
+                "signal_type": stype,
+                "value": random.uniform(0.0, 1.0),
+                "threshold": 0.7,
+                "triggered": random.random() > 0.8,
+                "source": f"mock_{stype}_api",
+            }
+        )
     return {
         "loan_id": loan_id or "LOAN-001",
         "signals_polled": len(signals),

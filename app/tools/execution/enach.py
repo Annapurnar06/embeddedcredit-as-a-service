@@ -1,4 +1,5 @@
 """eNACH/UPI autopay mandate setup -- mock."""
+
 from __future__ import annotations
 
 import uuid

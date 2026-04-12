@@ -1,4 +1,5 @@
 """Gig platform earnings fetch -- mock Swiggy/Zomato/Uber schema."""
+
 from __future__ import annotations
 
 from decimal import Decimal

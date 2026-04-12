@@ -1,4 +1,5 @@
 """Bank statement analysis -- BankConnect equivalent."""
+
 from __future__ import annotations
 
 from decimal import Decimal

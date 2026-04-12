@@ -1,4 +1,5 @@
 """Insurance premium computation."""
+
 from __future__ import annotations
 
 from decimal import Decimal
@@ -31,7 +32,5 @@ async def compute_insurance_premium(
         "premium_rate": str(rate),
         "annual_premium": str(premium.quantize(Decimal("0.01"))),
         "gst": str((premium * Decimal("0.18")).quantize(Decimal("0.01"))),
-        "total_premium": str(
-            (premium * Decimal("1.18")).quantize(Decimal("0.01"))
-        ),
+        "total_premium": str((premium * Decimal("1.18")).quantize(Decimal("0.01"))),
     }

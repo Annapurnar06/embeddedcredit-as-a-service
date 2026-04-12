@@ -1,4 +1,5 @@
 """System prompt construction -- segment-aware, state-aware, policy-aware."""
+
 from __future__ import annotations
 
 from app.models.session import SessionState

@@ -1,4 +1,5 @@
 """Moratorium application."""
+
 from __future__ import annotations
 
 from app.tools.registry import AuthorityLevel, ToolCategory, lending_tool

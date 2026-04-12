@@ -1,4 +1,5 @@
 """End-to-end integration tests -- full loan lifecycle flows."""
+
 import uuid
 
 import pytest
@@ -41,15 +42,19 @@ class TestDairyFarmerOrigination:
             lender_id="NBFC_001",
         )
         r = await ex.execute(
-            "verify_aadhaar_otp", ctx,
-            aadhaar_number="123456789012", otp="123456",
+            "verify_aadhaar_otp",
+            ctx,
+            aadhaar_number="123456789012",
+            otp="123456",
         )
         assert r.status == ToolResultStatus.SUCCESS
         assert r.data["verified"] is True
 
         r = await ex.execute(
-            "verify_pan", ctx,
-            pan_number="ABCDE1234F", aadhaar_name="Ramesh Patel",
+            "verify_pan",
+            ctx,
+            pan_number="ABCDE1234F",
+            aadhaar_name="Ramesh Patel",
         )
         assert r.status == ToolResultStatus.SUCCESS
 
@@ -67,8 +72,10 @@ class TestDairyFarmerOrigination:
         assert r.status == ToolResultStatus.SUCCESS
 
         r = await ex.execute(
-            "pull_credit_bureau", ctx,
-            bureau="CIBIL", aadhaar_hash="abc123",
+            "pull_credit_bureau",
+            ctx,
+            bureau="CIBIL",
+            aadhaar_hash="abc123",
         )
         assert r.status == ToolResultStatus.SUCCESS
 
@@ -80,14 +87,17 @@ class TestDairyFarmerOrigination:
 
         # Phase 3: Scoring (VERIFIED state)
         r = await ex.execute(
-            "evaluate_segment_policy", ctx,
-            segment="DAIRY_FARMER", score=700,
+            "evaluate_segment_policy",
+            ctx,
+            segment="DAIRY_FARMER",
+            score=700,
             confidence_level="HIGH",
         )
         assert r.data["decision"] == "APPROVE"
 
         r = await ex.execute(
-            "compute_segment_score", ctx,
+            "compute_segment_score",
+            ctx,
             segment="DAIRY_FARMER",
             features={
                 "pouring_regularity": 0.92,
@@ -101,21 +111,28 @@ class TestDairyFarmerOrigination:
         assert r.data["rate_band"] is not None
 
         r = await ex.execute(
-            "check_fraud_signals", ctx, device_fingerprint="fp_123",
+            "check_fraud_signals",
+            ctx,
+            device_fingerprint="fp_123",
         )
         assert r.data["result"] == "PASS"
 
         # Phase 4: Product Design
         r = await ex.execute(
-            "design_dynamic_product", ctx,
-            segment="DAIRY_FARMER", score=700,
+            "design_dynamic_product",
+            ctx,
+            segment="DAIRY_FARMER",
+            score=700,
             requested_amount=100000,
         )
         assert r.data["schedule_type"] == "SEASONAL_DYNAMIC"
 
         r = await ex.execute(
-            "generate_seasonal_schedule", ctx,
-            amount=100000, rate=15.0, tenure_months=12,
+            "generate_seasonal_schedule",
+            ctx,
+            amount=100000,
+            rate=15.0,
+            tenure_months=12,
         )
         assert len(r.data["entries"]) == 12
 
@@ -129,9 +146,12 @@ class TestDairyFarmerOrigination:
             kfs_generated=True,
         )
         r = await ex.execute(
-            "generate_kfs", ctx,
-            borrower_name="Ramesh Patel", amount=100000,
-            rate=15.0, tenure_months=12,
+            "generate_kfs",
+            ctx,
+            borrower_name="Ramesh Patel",
+            amount=100000,
+            rate=15.0,
+            tenure_months=12,
         )
         assert r.data["cooling_off_period_days"] == 3
 
@@ -139,24 +159,31 @@ class TestDairyFarmerOrigination:
         assert r.data["status"] == "OTP_SENT"
 
         r = await ex.execute(
-            "enroll_insurance", ctx,
-            insurance_type="PASHU_BIMA", sum_insured=80000,
+            "enroll_insurance",
+            ctx,
+            insurance_type="PASHU_BIMA",
+            sum_insured=80000,
         )
         assert r.data["status"] == "ENROLLED"
 
         r = await ex.execute(
-            "setup_enach_mandate", ctx, max_amount=8000,
+            "setup_enach_mandate",
+            ctx,
+            max_amount=8000,
         )
         assert r.data["mode"] == "eNACH"
 
         r = await ex.execute(
-            "execute_disbursement", ctx,
-            amount=100000, mode="UPI",
+            "execute_disbursement",
+            ctx,
+            amount=100000,
+            mode="UPI",
         )
         assert r.data["status"] == "SUCCESS"
 
         r = await ex.execute(
-            "register_cersai", ctx,
+            "register_cersai",
+            ctx,
             asset_type="LIVESTOCK",
             asset_description="5 milch cows",
         )
@@ -175,23 +202,28 @@ class TestReferFlow:
             lender_id="NBFC_001",
         )
         r = await ex.execute(
-            "evaluate_segment_policy", ctx,
-            segment="DAIRY_FARMER", score=550,
+            "evaluate_segment_policy",
+            ctx,
+            segment="DAIRY_FARMER",
+            score=550,
             confidence_level="LOW",
         )
         assert r.data["decision"] == "REFER"
 
         r = await ex.execute(
-            "generate_cam", ctx,
+            "generate_cam",
+            ctx,
             borrower_name="Suresh Kumar",
             segment="DAIRY_FARMER",
-            score=550, score_grade="B2",
+            score=550,
+            score_grade="B2",
             income_monthly=25000,
         )
         assert "Suresh" in r.data["borrower_summary"]
 
         r = await ex.execute(
-            "generate_explainability", ctx,
+            "generate_explainability",
+            ctx,
             decision="REFER",
             reason_codes=["SCORE_BELOW_MINIMUM"],
             language="hi",
@@ -219,14 +251,18 @@ class TestMonitoringFlow:
             {"signal_type": "cooperative_pouring_drop", "value": 0.9},
         ]
         r = await ex.execute(
-            "evaluate_monitoring_triggers", ctx,
-            segment="DAIRY_FARMER", signals=signals,
+            "evaluate_monitoring_triggers",
+            ctx,
+            segment="DAIRY_FARMER",
+            signals=signals,
         )
         assert r.data["recommended_action"] in ("WATCH", "ESCALATE")
 
         r = await ex.execute(
-            "evaluate_graduation", ctx,
-            months_on_book=12, on_time_rate=0.98,
+            "evaluate_graduation",
+            ctx,
+            months_on_book=12,
+            on_time_rate=0.98,
         )
         assert r.data["eligible"] is True
 
@@ -252,8 +288,10 @@ class TestServicingFlow:
         assert len(r.data["entries"]) == 18
 
         r = await ex.execute(
-            "process_prepayment", ctx,
-            amount=10000, mode="reduce_tenure",
+            "process_prepayment",
+            ctx,
+            amount=10000,
+            mode="reduce_tenure",
         )
         assert r.data["months_saved"] == 2
 
@@ -283,9 +321,7 @@ class TestAgentConversationFlow:
         t2 = await runtime.process_message(session, "mujhe loan chahiye")
         assert t2.agent_response != ""
 
-        await runtime.process_message(
-            session, "verify my aadhaar 123456789012"
-        )
+        await runtime.process_message(session, "verify my aadhaar 123456789012")
         assert len(session.history) == 3
 
         assert audit.total_logs >= 3
@@ -297,9 +333,7 @@ class TestAPIEndpoints:
     @pytest.mark.asyncio
     async def test_health(self):
         transport = ASGITransport(app=app)
-        async with AsyncClient(
-            transport=transport, base_url="http://test"
-        ) as client:
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
             resp = await client.get("/health")
         assert resp.status_code == 200
         assert resp.json()["status"] == "healthy"
@@ -307,9 +341,7 @@ class TestAPIEndpoints:
     @pytest.mark.asyncio
     async def test_chat_flow(self):
         transport = ASGITransport(app=app)
-        async with AsyncClient(
-            transport=transport, base_url="http://test"
-        ) as client:
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
             r1 = await client.post(
                 "/api/chat/message",
                 json={
@@ -342,44 +374,57 @@ class TestToolCoverage:
     def test_total_tool_count(self):
         all_tools = list(ToolRegistry.get_all().values())
         assert len(all_tools) >= 48, (
-            f"Expected >= 48 tools, got {len(all_tools)}: "
-            f"{[t.name for t in all_tools]}"
+            f"Expected >= 48 tools, got {len(all_tools)}: {[t.name for t in all_tools]}"
         )
 
     def test_identity_tools(self):
         names = [
-            "verify_aadhaar_otp", "verify_aadhaar_voice_otp",
-            "verify_pan", "verify_bank_account",
-            "initiate_aa_consent", "check_negative_list",
+            "verify_aadhaar_otp",
+            "verify_aadhaar_voice_otp",
+            "verify_pan",
+            "verify_bank_account",
+            "initiate_aa_consent",
+            "check_negative_list",
         ]
         for n in names:
             assert ToolRegistry.get(n) is not None, f"Missing: {n}"
 
     def test_data_tools(self):
         names = [
-            "fetch_uli_parallel", "fetch_aa_bank_data",
-            "pull_credit_bureau", "analyze_bank_statement",
-            "extract_document", "fetch_cooperative_data",
-            "fetch_platform_earnings", "fetch_gst_returns",
-            "compute_device_score", "cross_validate_sources",
-            "compute_confidence_score", "compute_borrower_profile",
+            "fetch_uli_parallel",
+            "fetch_aa_bank_data",
+            "pull_credit_bureau",
+            "analyze_bank_statement",
+            "extract_document",
+            "fetch_cooperative_data",
+            "fetch_platform_earnings",
+            "fetch_gst_returns",
+            "compute_device_score",
+            "cross_validate_sources",
+            "compute_confidence_score",
+            "compute_borrower_profile",
         ]
         for n in names:
             assert ToolRegistry.get(n) is not None, f"Missing: {n}"
 
     def test_scoring_tools(self):
         names = [
-            "evaluate_segment_policy", "compute_segment_score",
-            "compute_risk_pricing", "check_fraud_signals",
-            "generate_cam", "run_what_if",
-            "check_psl_classification", "generate_explainability",
+            "evaluate_segment_policy",
+            "compute_segment_score",
+            "compute_risk_pricing",
+            "check_fraud_signals",
+            "generate_cam",
+            "run_what_if",
+            "check_psl_classification",
+            "generate_explainability",
         ]
         for n in names:
             assert ToolRegistry.get(n) is not None, f"Missing: {n}"
 
     def test_product_tools(self):
         names = [
-            "design_dynamic_product", "generate_seasonal_schedule",
+            "design_dynamic_product",
+            "generate_seasonal_schedule",
             "generate_daily_micro_schedule",
             "generate_payout_linked_schedule",
             "compute_insurance_premium",
@@ -389,8 +434,11 @@ class TestToolCoverage:
 
     def test_execution_tools(self):
         names = [
-            "generate_kfs", "initiate_esign", "enroll_insurance",
-            "setup_enach_mandate", "execute_disbursement",
+            "generate_kfs",
+            "initiate_esign",
+            "enroll_insurance",
+            "setup_enach_mandate",
+            "execute_disbursement",
             "register_cersai",
         ]
         for n in names:
@@ -398,9 +446,12 @@ class TestToolCoverage:
 
     def test_servicing_tools(self):
         names = [
-            "get_loan_status", "get_repayment_schedule",
-            "process_prepayment", "apply_moratorium",
-            "generate_statement", "generate_noc",
+            "get_loan_status",
+            "get_repayment_schedule",
+            "process_prepayment",
+            "apply_moratorium",
+            "generate_statement",
+            "generate_noc",
         ]
         for n in names:
             assert ToolRegistry.get(n) is not None, f"Missing: {n}"

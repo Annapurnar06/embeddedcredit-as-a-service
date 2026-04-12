@@ -1,4 +1,5 @@
 """Fraud signal checking -- velocity, device, reference graph."""
+
 from __future__ import annotations
 
 from app.schemas.loan import FraudCheckResult

@@ -82,16 +82,12 @@ class ToolExecutor:
         # Step 1: Session state check
         state_check = self._check_session_state(tool_def, context)
         if state_check is not None:
-            return self._finalize(
-                tool_name, state_check, start_time, state_before, state_before
-            )
+            return self._finalize(tool_name, state_check, start_time, state_before, state_before)
 
         # Step 2: Confirmation check
         confirm_check = self._check_confirmation(tool_def, context)
         if confirm_check is not None:
-            return self._finalize(
-                tool_name, confirm_check, start_time, state_before, state_before
-            )
+            return self._finalize(tool_name, confirm_check, start_time, state_before, state_before)
 
         # Step 3: Authority boundary checks
         authority_check = self._check_authority(tool_def, context)
@@ -101,9 +97,7 @@ class ToolExecutor:
             )
 
         # Step 4: Circuit breaker check
-        cb = CircuitBreakerManager.get_or_create(
-            tool_name, tool_def.circuit_breaker_threshold
-        )
+        cb = CircuitBreakerManager.get_or_create(tool_name, tool_def.circuit_breaker_threshold)
         if cb.is_open():
             return self._finalize(
                 tool_name,
@@ -111,9 +105,7 @@ class ToolExecutor:
                     tool_name=tool_name,
                     status=ToolResultStatus.DEGRADED,
                     error=f"Circuit breaker OPEN for {tool_name}",
-                    policy_checks=[
-                        {"check": "circuit_breaker", "result": "OPEN"}
-                    ],
+                    policy_checks=[{"check": "circuit_breaker", "result": "OPEN"}],
                 ),
                 start_time,
                 state_before,
@@ -198,12 +190,8 @@ class ToolExecutor:
             return ToolResult(
                 tool_name=tool_def.name,
                 status=ToolResultStatus.BLOCKED,
-                error=(
-                    f"Tool '{tool_def.name}' requires explicit borrower confirmation"
-                ),
-                policy_checks=[
-                    {"check": "confirmation", "result": "BLOCKED"}
-                ],
+                error=(f"Tool '{tool_def.name}' requires explicit borrower confirmation"),
+                policy_checks=[{"check": "confirmation", "result": "BLOCKED"}],
             )
         return None
 
@@ -212,25 +200,20 @@ class ToolExecutor:
     ) -> ToolResult | None:
         checks: list[dict[str, Any]] = []
 
-        if (
-            tool_def.authority_level == AuthorityLevel.WRITE
-            and not context.maker_approved
-        ):
+        if tool_def.authority_level == AuthorityLevel.WRITE and not context.maker_approved:
             from app.core.config import settings
 
             if not settings.can_disburse_without_human:
-                    checks.append(
-                        {"check": "maker_checker", "result": "BLOCKED"}
-                    )
-                    return ToolResult(
-                        tool_name=tool_def.name,
-                        status=ToolResultStatus.BLOCKED,
-                        error=(
-                            f"Tool '{tool_def.name}' requires maker-checker "
-                            f"approval (authority_level=write)"
-                        ),
-                        policy_checks=checks,
-                    )
+                checks.append({"check": "maker_checker", "result": "BLOCKED"})
+                return ToolResult(
+                    tool_name=tool_def.name,
+                    status=ToolResultStatus.BLOCKED,
+                    error=(
+                        f"Tool '{tool_def.name}' requires maker-checker "
+                        f"approval (authority_level=write)"
+                    ),
+                    policy_checks=checks,
+                )
         return None
 
     def _finalize(

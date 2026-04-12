@@ -62,9 +62,7 @@ async def test_data_tools_blocked_in_unverified():
 @pytest.mark.asyncio
 async def test_uli_fetch():
     executor = ToolExecutor()
-    result = await executor.execute(
-        "fetch_uli_parallel", _ctx(), pincode="385001"
-    )
+    result = await executor.execute("fetch_uli_parallel", _ctx(), pincode="385001")
     assert result.status == ToolResultStatus.SUCCESS
     assert result.data["land_records"] is not None
     assert result.data["weather_imd"]["district"] == "Banaskantha"
@@ -73,9 +71,7 @@ async def test_uli_fetch():
 @pytest.mark.asyncio
 async def test_aa_bank_data():
     executor = ToolExecutor()
-    result = await executor.execute(
-        "fetch_aa_bank_data", _ctx(), consent_id="consent-123"
-    )
+    result = await executor.execute("fetch_aa_bank_data", _ctx(), consent_id="consent-123")
     assert result.status == ToolResultStatus.SUCCESS
     assert result.data["bank_name"] == "STATE BANK OF INDIA"
     assert result.data["months_available"] == 12
@@ -84,18 +80,14 @@ async def test_aa_bank_data():
 @pytest.mark.asyncio
 async def test_bureau_requires_confirmation():
     executor = ToolExecutor()
-    result = await executor.execute(
-        "pull_credit_bureau", _ctx(confirmed=False), aadhaar_hash="abc"
-    )
+    result = await executor.execute("pull_credit_bureau", _ctx(confirmed=False), aadhaar_hash="abc")
     assert result.status == ToolResultStatus.BLOCKED
 
 
 @pytest.mark.asyncio
 async def test_bureau_with_confirmation():
     executor = ToolExecutor()
-    result = await executor.execute(
-        "pull_credit_bureau", _ctx(confirmed=True), aadhaar_hash="abc"
-    )
+    result = await executor.execute("pull_credit_bureau", _ctx(confirmed=True), aadhaar_hash="abc")
     assert result.status == ToolResultStatus.SUCCESS
     assert result.data["score"] == 720
     assert result.data["bureau"] == "CIBIL"
@@ -113,9 +105,7 @@ async def test_bank_statement():
 @pytest.mark.asyncio
 async def test_extract_document():
     executor = ToolExecutor()
-    result = await executor.execute(
-        "extract_document", _ctx(), document_type="ITR"
-    )
+    result = await executor.execute("extract_document", _ctx(), document_type="ITR")
     assert result.status == ToolResultStatus.SUCCESS
     assert result.data["document_type"] == "ITR"
     assert result.data["fields_extracted"] == 8
@@ -124,9 +114,7 @@ async def test_extract_document():
 @pytest.mark.asyncio
 async def test_cooperative_data():
     executor = ToolExecutor()
-    result = await executor.execute(
-        "fetch_cooperative_data", _ctx(), membership_id="BD-2020-12345"
-    )
+    result = await executor.execute("fetch_cooperative_data", _ctx(), membership_id="BD-2020-12345")
     assert result.status == ToolResultStatus.SUCCESS
     assert result.data["membership_tenure_months"] == 48
     assert result.data["pouring_regularity_pct"] == 92.0
@@ -149,9 +137,7 @@ async def test_platform_earnings():
 @pytest.mark.asyncio
 async def test_gst_returns():
     executor = ToolExecutor()
-    result = await executor.execute(
-        "fetch_gst_returns", _ctx(), gstin="24AAAAA0000A1Z5"
-    )
+    result = await executor.execute("fetch_gst_returns", _ctx(), gstin="24AAAAA0000A1Z5")
     assert result.status == ToolResultStatus.SUCCESS
     assert result.data["filing_regularity_pct"] == 91.7
 
@@ -159,9 +145,7 @@ async def test_gst_returns():
 @pytest.mark.asyncio
 async def test_device_score():
     executor = ToolExecutor()
-    result = await executor.execute(
-        "compute_device_score", _ctx(), device_fingerprint="fp123"
-    )
+    result = await executor.execute("compute_device_score", _ctx(), device_fingerprint="fp123")
     assert result.status == ToolResultStatus.SUCCESS
     assert 0 <= result.data["score"] <= 1000
 

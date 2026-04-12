@@ -6,10 +6,21 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: postgresql+asyncpg://${DB_USER:-lendingos}:${DB_PASSWORD:-lendingos}@postgres:5432/lendingos
       REDIS_URL: redis://redis:6379/0
-      ENVIRONMENT: development
-      LOG_LEVEL: INFO
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-change-me}
+      LLM_PROVIDER: ${LLM_PROVIDER:-openai}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4o}
+      CARTESIA_API_KEY: ${CARTESIA_API_KEY:-}
+      STT_API_KEY: ${STT_API_KEY:-}
+      STT_PROVIDER: ${STT_PROVIDER:-deepgram}
+      MEM0_API_KEY: ${MEM0_API_KEY:-}
+      WHATSAPP_VERIFY_TOKEN: ${WHATSAPP_VERIFY_TOKEN:-}
+      WHATSAPP_API_TOKEN: ${WHATSAPP_API_TOKEN:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -18,12 +29,18 @@ services:
     volumes:
       - ./app:/app/app
       - ./segments:/app/segments
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; r=httpx.get('http://localhost:8000/api/health'); r.raise_for_status()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER:-lendingos}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-lendingos}
       POSTGRES_DB: lendingos
     ports:
       - "5432:5432"
@@ -39,11 +56,15 @@ services:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    volumes:
+      - redisdata:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 5s
       retries: 5
+    command: redis-server --appendonly yes
 
 volumes:
   pgdata:
+  redisdata:

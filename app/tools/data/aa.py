@@ -1,4 +1,5 @@
 """Account Aggregator bank data fetch -- mock Setu AA response."""
+
 from __future__ import annotations
 
 from decimal import Decimal

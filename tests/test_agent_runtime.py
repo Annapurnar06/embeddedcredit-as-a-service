@@ -52,8 +52,7 @@ async def test_state_transitions_on_verification():
     turn = await runtime.process_message(session, "verify my aadhaar 123456789012")
     if "verify_aadhaar_otp" in turn.tools_called:
         verified_results = [
-            r for r in turn.tool_results
-            if r.get("data", {}).get("verified") is True
+            r for r in turn.tool_results if r.get("data", {}).get("verified") is True
         ]
         if verified_results:
             assert session.state == SessionState.VERIFIED
@@ -96,10 +95,7 @@ async def test_complaint_triggers_grievance():
     session = _session(state=SessionState.VERIFIED)
     turn = await runtime.process_message(session, "I have a complaint, this is wrong")
     response_lower = turn.agent_response.lower()
-    assert any(
-        w in response_lower
-        for w in ["grievance", "pareshani", "sampark", "officer"]
-    )
+    assert any(w in response_lower for w in ["grievance", "pareshani", "sampark", "officer"])
 
 
 @pytest.mark.asyncio

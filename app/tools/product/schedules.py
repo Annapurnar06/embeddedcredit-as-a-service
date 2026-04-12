@@ -1,4 +1,5 @@
 """EMI schedule generators for different segment types."""
+
 from __future__ import annotations
 
 from datetime import date, timedelta

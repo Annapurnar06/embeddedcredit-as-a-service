@@ -1,4 +1,5 @@
 """Cross-validation, confidence scoring, and profile assembly."""
+
 from __future__ import annotations
 
 from uuid import UUID, uuid4
@@ -24,9 +25,7 @@ async def cross_validate_sources(
 ) -> dict:
     income_delta = 0.0
     if bank_income > 0 and cooperative_income > 0:
-        income_delta = abs(bank_income - cooperative_income) / max(
-            bank_income, cooperative_income
-        )
+        income_delta = abs(bank_income - cooperative_income) / max(bank_income, cooperative_income)
 
     anomalies = []
     if income_delta > 0.3:
@@ -62,7 +61,7 @@ async def compute_confidence_score(
     val_score = 1.0 if validation_passed else 0.6
     anomaly_score = 1.0 if anomaly_free else 0.3
 
-    score = (0.3 * src_score + 0.3 * fresh_score + 0.2 * val_score + 0.2 * anomaly_score)
+    score = 0.3 * src_score + 0.3 * fresh_score + 0.2 * val_score + 0.2 * anomaly_score
 
     if score >= 0.8:
         level = "HIGH"

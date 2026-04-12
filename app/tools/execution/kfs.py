@@ -1,4 +1,5 @@
 """Key Fact Statement generation -- RBI mandatory before disbursement."""
+
 from __future__ import annotations
 
 from datetime import datetime, timezone

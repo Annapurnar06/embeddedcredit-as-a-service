@@ -1,11 +1,19 @@
 """Document OCR and extraction -- mock for Indian document types."""
+
 from __future__ import annotations
 
 from app.tools.registry import ToolCategory, lending_tool
 
 SUPPORTED_TYPES = [
-    "AADHAAR", "PAN", "SALARY_SLIP", "ITR", "GST_RETURN",
-    "PROPERTY_DOC", "VEHICLE_RC", "GOLD_APPRAISAL", "BANK_STATEMENT",
+    "AADHAAR",
+    "PAN",
+    "SALARY_SLIP",
+    "ITR",
+    "GST_RETURN",
+    "PROPERTY_DOC",
+    "VEHICLE_RC",
+    "GOLD_APPRAISAL",
+    "BANK_STATEMENT",
 ]
 
 
@@ -30,38 +38,44 @@ async def extract_document(
     }
 
     if document_type == "ITR":
-        base.update({
-            "fields_extracted": 8,
-            "data": {
-                "assessment_year": "2025-26",
-                "total_income": "450000",
-                "tax_paid": "12500",
-                "filing_date": "2025-07-15",
-                "itr_form": "ITR-1",
-            },
-        })
+        base.update(
+            {
+                "fields_extracted": 8,
+                "data": {
+                    "assessment_year": "2025-26",
+                    "total_income": "450000",
+                    "tax_paid": "12500",
+                    "filing_date": "2025-07-15",
+                    "itr_form": "ITR-1",
+                },
+            }
+        )
     elif document_type == "GST_RETURN":
-        base.update({
-            "fields_extracted": 6,
-            "data": {
-                "gstin": "24AAAAA0000A1Z5",
-                "period": "Jan-2026",
-                "turnover": "250000",
-                "tax_payable": "45000",
-                "filing_status": "FILED",
-            },
-        })
+        base.update(
+            {
+                "fields_extracted": 6,
+                "data": {
+                    "gstin": "24AAAAA0000A1Z5",
+                    "period": "Jan-2026",
+                    "turnover": "250000",
+                    "tax_payable": "45000",
+                    "filing_status": "FILED",
+                },
+            }
+        )
     elif document_type == "VEHICLE_RC":
-        base.update({
-            "fields_extracted": 5,
-            "data": {
-                "registration_number": "GJ01AB1234",
-                "owner_name": "RAMESH PATEL",
-                "vehicle_class": "LMV",
-                "fuel_type": "DIESEL",
-                "hypothecation": None,
-            },
-        })
+        base.update(
+            {
+                "fields_extracted": 5,
+                "data": {
+                    "registration_number": "GJ01AB1234",
+                    "owner_name": "RAMESH PATEL",
+                    "vehicle_class": "LMV",
+                    "fuel_type": "DIESEL",
+                    "hypothecation": None,
+                },
+            }
+        )
     else:
         base["fields_extracted"] = 3
         base["data"] = {"raw_text": "Extracted document content"}
