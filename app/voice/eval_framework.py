@@ -1,4 +1,6 @@
-"""Voice AI evaluation framework -- measures TTS quality, ASR accuracy, pipeline latency, and segment coverage.
+"""Voice AI evaluation framework.
+
+Measures TTS quality, ASR accuracy, pipeline latency, and segment coverage.
 
 Provides automated eval suites that run against Cartesia TTS, multi-provider ASR,
 and the full voice pipeline (ASR -> intent -> agent -> TTS round-trip).
@@ -12,8 +14,8 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from app.core.logging import get_logger
-from app.voice.asr_provider import ASRConfig, ASRResult, MultiProviderASR
-from app.voice.cartesia_client import CartesiaTTSClient, TTSResult, VoiceConfig
+from app.voice.asr_provider import MultiProviderASR
+from app.voice.cartesia_client import CartesiaTTSClient, VoiceConfig
 
 logger = get_logger(__name__)
 

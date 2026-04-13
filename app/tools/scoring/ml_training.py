@@ -10,9 +10,7 @@ Solves: Score models are rule-based weighted sums. This module provides:
 
 from __future__ import annotations
 
-import json
 import math
-import os
 import random
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -173,20 +171,20 @@ class SegmentModelTrainer:
         feature_names: list[str],
         split: int,
     ) -> TrainedModel:
-        X = np.array([[row[f] for f in feature_names] for row in features])
+        x_data = np.array([[row[f] for f in feature_names] for row in features])
         y = np.array(labels)
 
-        X_train, X_test = X[:split], X[split:]
+        x_train, x_test = x_data[:split], x_data[split:]
         y_train, y_test = y[:split], y[split:]
 
         model = xgb.XGBClassifier(**config.xgb_params)
         model.fit(
-            X_train, y_train,
-            eval_set=[(X_test, y_test)],
+            x_train, y_train,
+            eval_set=[(x_test, y_test)],
             verbose=False,
         )
 
-        y_pred = model.predict_proba(X_test)[:, 1]
+        y_pred = model.predict_proba(x_test)[:, 1]
         metrics = self._compute_metrics(y_test, y_pred)
 
         MODEL_DIR.mkdir(parents=True, exist_ok=True)
@@ -254,12 +252,12 @@ class SegmentModelTrainer:
         gini = 2 * auc - 1
 
         # KS statistic
-        sorted_pairs = sorted(zip(y_pred, y_true), key=lambda x: -x[0])
+        sorted_pairs = sorted(zip(y_pred, y_true, strict=True), key=lambda x: -x[0])
         n_pos = sum(y_true)
         n_neg = len(y_true) - n_pos
         cum_pos = cum_neg = 0
         max_ks = 0.0
-        for pred, actual in sorted_pairs:
+        for _pred, actual in sorted_pairs:
             if actual == 1:
                 cum_pos += 1
             else:
@@ -268,7 +266,7 @@ class SegmentModelTrainer:
             max_ks = max(max_ks, ks)
 
         threshold = 0.5
-        approved = [(p, a) for p, a in zip(y_pred, y_true) if p < threshold]
+        approved = [(p, a) for p, a in zip(y_pred, y_true, strict=True) if p < threshold]
         approval_rate = len(approved) / max(len(y_true), 1)
         default_rate_approved = (
             sum(a for _, a in approved) / max(len(approved), 1) if approved else 0.0
@@ -289,7 +287,7 @@ class SegmentModelTrainer:
         if n == 0:
             return ModelMetrics()
 
-        pairs = list(zip(y_pred, y_true))
+        pairs = list(zip(y_pred, y_true, strict=True))
         n_pos = sum(y_true)
         n_neg = n - n_pos
         if n_pos == 0 or n_neg == 0:
@@ -312,7 +310,7 @@ class SegmentModelTrainer:
         sorted_pairs = sorted(pairs, key=lambda x: -x[0])
         cum_p = cum_n = 0
         max_ks = 0.0
-        for pred, actual in sorted_pairs:
+        for _pred, actual in sorted_pairs:
             if actual == 1:
                 cum_p += 1
             else:

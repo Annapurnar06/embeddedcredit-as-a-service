@@ -3,10 +3,10 @@
 import pytest
 
 from app.voice.eval_framework import (
+    LENDING_EVAL_CASES,
     ASREvaluator,
     EvalCase,
     EvalSuiteReport,
-    LENDING_EVAL_CASES,
     PipelineEvaluator,
     TTSEvaluator,
 )

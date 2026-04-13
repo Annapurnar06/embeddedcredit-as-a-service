@@ -10,7 +10,6 @@ from __future__ import annotations
 import base64
 import enum
 from dataclasses import dataclass, field
-from typing import Any
 
 import httpx
 
@@ -307,11 +306,11 @@ class MultiProviderASR:
     def _available_providers(self) -> list[ASRProvider]:
         out = []
         for p in self.config.fallback_order:
-            if p == ASRProvider.DEEPGRAM and self.config.deepgram_api_key:
-                out.append(p)
-            elif p == ASRProvider.GOOGLE and self.config.google_api_key:
-                out.append(p)
-            elif p == ASRProvider.BHASHINI and self.config.bhashini_api_key:
+            if (
+                (p == ASRProvider.DEEPGRAM and self.config.deepgram_api_key)
+                or (p == ASRProvider.GOOGLE and self.config.google_api_key)
+                or (p == ASRProvider.BHASHINI and self.config.bhashini_api_key)
+            ):
                 out.append(p)
         return out
 

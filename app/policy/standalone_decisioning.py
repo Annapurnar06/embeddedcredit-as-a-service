@@ -262,7 +262,13 @@ class StandaloneDecisionEngine:
             segment=segment,
             decision=decision,
             score=score,
-            grade=grade or ("A1" if score >= 750 else "A2" if score >= 650 else "B1" if score >= 550 else "B2" if score >= 450 else "C"),
+            grade=grade or (
+                "A1" if score >= 750
+                else "A2" if score >= 650
+                else "B1" if score >= 550
+                else "B2" if score >= 450
+                else "C"
+            ),
             confidence=confidence,
             approved_amount=round(amount, 2),
             interest_rate=rate,

@@ -3,8 +3,8 @@
 import pytest
 
 from app.tools.scoring.ml_training import (
-    SyntheticDataGenerator,
     SegmentModelTrainer,
+    SyntheticDataGenerator,
     TrainingConfig,
     compare_models,
 )
@@ -30,7 +30,7 @@ class TestSyntheticDataGenerator:
     def test_labels_are_binary(self, generator):
         config = TrainingConfig(segment="DAIRY_FARMER", n_samples=500)
         _, labels = generator.generate(config)
-        assert all(l in (0, 1) for l in labels)
+        assert all(label in (0, 1) for label in labels)
 
     def test_default_rate_reasonable(self, generator):
         config = TrainingConfig(segment="DAIRY_FARMER", n_samples=2000)

@@ -3,7 +3,6 @@
 import pytest
 
 from app.policy.standalone_decisioning import (
-    CreditDecision,
     StandaloneDecisionEngine,
 )
 
