@@ -26,10 +26,17 @@ class Settings(BaseSettings):
     llm_max_tokens: int = 1024
     llm_temperature: float = 0.3
 
-    # Cartesia Voice AI
+    # Cartesia Voice AI (TTS only)
     cartesia_api_key: str = ""
-    stt_api_key: str = ""
-    stt_provider: str = "deepgram"
+
+    # Speech-to-Text: multi-provider fallback (Deepgram -> Google -> Bhashini)
+    stt_api_key: str = ""           # legacy: maps to deepgram
+    stt_provider: str = "deepgram"  # legacy
+    deepgram_api_key: str = ""
+    google_stt_api_key: str = ""
+    bhashini_api_key: str = ""
+    bhashini_user_id: str = ""
+    bhashini_pipeline_id: str = "64392f96daac500b55c543cd"
 
     # mem0 memory
     mem0_api_key: str = ""
